@@ -640,7 +640,7 @@ import '../styles/global.css';
             var normDist = distToCursor / GRAVITY_RADIUS; // 0 = at cursor, 1 = at edge
             // Stronger pull when closer (inverse square, clamped)
             var force = GRAVITY_STRENGTH / (normDist * normDist + 0.05);
-            force = Math.min(force, 8);
+            force = Math.min(force, 4);
             // Scale down gravity when cursor is moving fast
             force *= gravityScale;
             var ux = toCursorX / distToCursor;
@@ -686,21 +686,31 @@ import '../styles/global.css';
             s.vy *= DAMPING;
 
           } else {
-            // === NO GRAVITY: spring back home ===
+            // === NO GRAVITY: return home ===
             if (s.active) {
-              // Just left gravity — kill most velocity, small random kick
-              var kickAngle = Math.atan2(s.vy, s.vx) + (Math.random() - 0.5) * 1.5;
-              var kickSpeed = Math.min(1.5, Math.sqrt(s.vx * s.vx + s.vy * s.vy) * 0.2);
-              s.vx = Math.cos(kickAngle) * kickSpeed;
-              s.vy = Math.sin(kickAngle) * kickSpeed;
               s.active = false;
             }
-            // Spring toward home position
-            s.vx += toHomeX * HOME_PULL;
-            s.vy += toHomeY * HOME_PULL;
-            // Heavy damping — settle quickly, no drifting
-            s.vx *= 0.88;
-            s.vy *= 0.88;
+            // Kill velocity aggressively and spring home
+            s.vx *= 0.75;
+            s.vy *= 0.75;
+            s.vx += toHomeX * 0.08;
+            s.vy += toHomeY * 0.08;
+            // If very far from home, just snap closer to prevent flying stars
+            if (distToHome > GRAVITY_RADIUS * 1.5) {
+              s.px = homeX;
+              s.py = homeY;
+              s.vx = 0;
+              s.vy = 0;
+              s.trail = [];
+            }
+          }
+
+          // Hard cap velocity to prevent runaway stars
+          var maxSpeed = s.active ? 3 : 1.5;
+          var spd = Math.sqrt(s.vx * s.vx + s.vy * s.vy);
+          if (spd > maxSpeed) {
+            s.vx = (s.vx / spd) * maxSpeed;
+            s.vy = (s.vy / spd) * maxSpeed;
           }
 
           // Integrate position
@@ -708,7 +718,6 @@ import '../styles/global.css';
           s.py += s.vy;
 
           // Trail: only record when actively being pulled by gravity
-          var spd = Math.sqrt(s.vx * s.vx + s.vy * s.vy);
           if (s.active && spd > 0.5) {
             s.trail.push({ x: s.px, y: s.py });
             if (s.trail.length > TRAIL_MAX) s.trail.shift();
