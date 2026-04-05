@@ -236,20 +236,29 @@ import '../styles/global.css';
               </div>
               <span class="px-3 py-1 bg-[var(--color-accent)]/20 border border-[var(--color-accent)]/30 rounded-full text-xs text-[var(--color-accent-bright)]" style="font-family: var(--font-mono)">ACTIVE</span>
             </div>
-            <div class="grid md:grid-cols-2 gap-6">
-              <div>
-                <h4 class="text-sm text-[var(--color-text-secondary)] uppercase tracking-wider mb-3" style="font-family: var(--font-mono)">Specifications</h4>
-                <ul class="space-y-2 text-sm">
-                  <li class="flex gap-3"><span class="text-[var(--color-accent)]">▸</span><span class="text-[var(--color-text-secondary)]"><span class="text-white">STM32H7</span> — 600MHz</span></li>
-                  <li class="flex gap-3"><span class="text-[var(--color-accent)]">▸</span><span class="text-[var(--color-text-secondary)]"><span class="text-white">BMI055/088</span> IMU + <span class="text-white">BMP390L</span> Baro</span></li>
-                  <li class="flex gap-3"><span class="text-[var(--color-accent)]">▸</span><span class="text-[var(--color-text-secondary)]"><span class="text-white">H3LIS</span> High-G Accelerometer</span></li>
-                  <li class="flex gap-3"><span class="text-[var(--color-accent)]">▸</span><span class="text-[var(--color-text-secondary)]">Flash logging, <span class="text-white">8 servos</span>, <span class="text-white">4 pyro</span></span></li>
-                  <li class="flex gap-3"><span class="text-[var(--color-accent)]">▸</span><span class="text-[var(--color-text-secondary)]"><span class="text-white">TPS259830</span> power — 20A</span></li>
-                  <li class="flex gap-3"><span class="text-[var(--color-accent)]">▸</span><span class="text-[var(--color-text-secondary)]"><span class="text-white">83×44mm</span>, USB-C</span></li>
-                </ul>
-              </div>
-              <div class="w-full h-56 bg-black/30 border border-[var(--color-surface-border)] rounded-lg flex items-center justify-center">
-                <p class="text-[var(--color-text-secondary)] text-sm" style="font-family: var(--font-mono)">[Aurora Orbiton PCB Render]</p>
+            <div>
+              <h4 class="text-sm text-[var(--color-text-secondary)] uppercase tracking-wider mb-3" style="font-family: var(--font-mono)">Specifications</h4>
+              <ul class="space-y-2 text-sm mb-5">
+                <li class="flex gap-3"><span class="text-[var(--color-accent)]">▸</span><span class="text-[var(--color-text-secondary)]"><span class="text-white">STM32H7</span> — 600MHz</span></li>
+                <li class="flex gap-3"><span class="text-[var(--color-accent)]">▸</span><span class="text-[var(--color-text-secondary)]"><span class="text-white">BMI055/088</span> IMU + <span class="text-white">BMP390L</span> Baro</span></li>
+                <li class="flex gap-3"><span class="text-[var(--color-accent)]">▸</span><span class="text-[var(--color-text-secondary)]"><span class="text-white">H3LIS</span> High-G Accelerometer</span></li>
+                <li class="flex gap-3"><span class="text-[var(--color-accent)]">▸</span><span class="text-[var(--color-text-secondary)]">Flash logging, <span class="text-white">8 servos</span>, <span class="text-white">4 pyro</span></span></li>
+                <li class="flex gap-3"><span class="text-[var(--color-accent)]">▸</span><span class="text-[var(--color-text-secondary)]"><span class="text-white">TPS259830</span> power — 20A</span></li>
+                <li class="flex gap-3"><span class="text-[var(--color-accent)]">▸</span><span class="text-[var(--color-text-secondary)]"><span class="text-white">83×44mm</span>, USB-C</span></li>
+              </ul>
+              <div class="grid md:grid-cols-2 gap-4 h-80">
+                <div id="orbiton-viewer" class="relative bg-black/30 border border-[var(--color-surface-border)] rounded-lg overflow-hidden h-full">
+                  <canvas id="orbiton-canvas" class="w-full h-full cursor-grab"></canvas>
+                  <div id="orbiton-loading" class="absolute inset-0 flex items-center justify-center">
+                    <p class="text-[var(--color-text-secondary)] text-sm" style="font-family: var(--font-mono)">Loading PCB...</p>
+                  </div>
+                  <div id="orbiton-tooltip" class="pointer-events-none absolute z-10 px-3 py-1.5 bg-black/80 border border-[var(--color-accent)]/30 rounded text-xs text-white opacity-0 transition-opacity duration-150 whitespace-nowrap" style="font-family: var(--font-mono)">
+                    <span id="orbiton-tooltip-title"></span>
+                  </div>
+                </div>
+                <div class="rounded-lg border border-[var(--color-surface-border)] overflow-hidden bg-black/30 h-full">
+                  <img src="/images/orbiton-pcb.png" alt="Aurora Orbiton PCB Layout" class="w-full h-full object-contain" />
+                </div>
               </div>
             </div>
           </div>
@@ -1137,5 +1146,188 @@ import '../styles/global.css';
       tvcCamera.updateProjectionMatrix();
       tvcRenderer.setSize(w, h);
     }).observe(tvcContainer);
+  </script>
+
+  <!-- Orbiton PCB 3D Viewer Script -->
+  <script>
+    import * as THREE from 'three';
+    import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+    import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+    const pcbContainer = document.getElementById('orbiton-viewer')!;
+    const pcbCanvas = document.getElementById('orbiton-canvas') as HTMLCanvasElement;
+    const pcbLoading = document.getElementById('orbiton-loading')!;
+    const pcbTooltip = document.getElementById('orbiton-tooltip')!;
+    const pcbTooltipTitle = document.getElementById('orbiton-tooltip-title')!;
+
+    const pcbScene = new THREE.Scene();
+    const pcbCamera = new THREE.PerspectiveCamera(35, 1, 0.01, 100);
+    const pcbRenderer = new THREE.WebGLRenderer({ canvas: pcbCanvas, antialias: true, alpha: true });
+    pcbRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    pcbRenderer.setSize(pcbContainer.clientWidth, pcbContainer.clientHeight);
+
+    const pcbControls = new OrbitControls(pcbCamera, pcbCanvas);
+    pcbControls.enableDamping = true;
+    pcbControls.dampingFactor = 0.05;
+    pcbControls.enablePan = false;
+
+    // Lighting
+    pcbScene.add(new THREE.AmbientLight(0xffffff, 0.8));
+    const pcbDirLight = new THREE.DirectionalLight(0xffffff, 1.0);
+    pcbDirLight.position.set(3, 5, 3);
+    pcbScene.add(pcbDirLight);
+    const pcbDirLight2 = new THREE.DirectionalLight(0xffffff, 0.3);
+    pcbDirLight2.position.set(-2, 2, -2);
+    pcbScene.add(pcbDirLight2);
+
+    // Highlight material
+    const pcbHighlightMat = new THREE.MeshPhongMaterial({ color: 0xff4444, shininess: 80, emissive: 0x331111, specular: 0x666666 });
+
+    // Component name formatting
+    function formatComponentName(refDes: string): string {
+      if (refDes.startsWith('C')) return `C${refDes.slice(1)} — Capacitor`;
+      if (refDes.startsWith('R')) return `R${refDes.slice(1)} — Resistor`;
+      if (refDes.startsWith('D')) return `D${refDes.slice(1)} — Diode`;
+      if (refDes.startsWith('U')) return `U${refDes.slice(1)} — IC`;
+      if (refDes.startsWith('SW')) return `SW${refDes.slice(2)} — Switch`;
+      if (refDes.startsWith('J')) return `J${refDes.slice(1)} — Connector`;
+      return refDes;
+    }
+
+    const pcbMeshes: THREE.Mesh[] = [];
+    const pcbOriginalMats = new Map<THREE.Mesh, THREE.Material | THREE.Material[]>();
+    const pcbMeshNames = new Map<THREE.Mesh, string>();
+    const pcbMeshToGroup = new Map<THREE.Mesh, string>();
+    const pcbGroupMeshes = new Map<string, THREE.Mesh[]>();
+
+    const pcbRaycaster = new THREE.Raycaster();
+    const pcbMouse = new THREE.Vector2();
+
+    const pcbLoader = new GLTFLoader();
+    pcbLoader.load('/models/orbiton.glb', (gltf) => {
+      const model = gltf.scene;
+
+      // Each direct child of root is a component — tag all its descendant meshes
+      model.children.forEach(child => {
+        const name = child.name;
+        if (!name || name.startsWith('=>')) return; // skip board geometry nodes
+
+        const displayName = formatComponentName(name);
+        child.traverse(descendant => {
+          if ((descendant as THREE.Mesh).isMesh) {
+            const m = descendant as THREE.Mesh;
+            pcbOriginalMats.set(m, m.material);
+            pcbMeshNames.set(m, displayName);
+            pcbMeshToGroup.set(m, name);
+            if (!pcbGroupMeshes.has(name)) pcbGroupMeshes.set(name, []);
+            pcbGroupMeshes.get(name)!.push(m);
+            pcbMeshes.push(m);
+          }
+        });
+      });
+
+      // Center and orient
+      const box = new THREE.Box3().setFromObject(model);
+      const center = box.getCenter(new THREE.Vector3());
+      model.position.set(-center.x, -center.y, -center.z);
+
+      const pivot = new THREE.Group();
+      pivot.add(model);
+      pcbScene.add(pivot);
+
+      const finalBox = new THREE.Box3().setFromObject(pivot);
+      const finalCenter = finalBox.getCenter(new THREE.Vector3());
+      const finalSize = finalBox.getSize(new THREE.Vector3());
+      pcbControls.target.copy(finalCenter);
+      const dist = Math.max(finalSize.x, finalSize.y, finalSize.z) * 2.2;
+      pcbCamera.position.set(finalCenter.x + dist * 0.4, finalCenter.y + dist * 0.6, finalCenter.z + dist * 0.5);
+      pcbControls.update();
+
+      pcbLoading.style.opacity = '0';
+      pcbLoading.style.transition = 'opacity 0.5s';
+      setTimeout(() => { pcbLoading.style.display = 'none'; }, 500);
+    },
+    undefined,
+    (error) => { console.error('Orbiton PCB load error:', error); }
+    );
+
+    // Hover highlighting
+    let pcbCurrentGroup: string | null = null;
+
+    function pcbHighlightGroup(groupName: string) {
+      pcbMeshes.forEach(m => {
+        const orig = pcbOriginalMats.get(m);
+        if (orig) m.material = orig as THREE.Material;
+      });
+      const meshes = pcbGroupMeshes.get(groupName);
+      if (meshes) meshes.forEach(m => { m.material = pcbHighlightMat; });
+    }
+
+    function pcbClearHighlight() {
+      pcbMeshes.forEach(m => {
+        const orig = pcbOriginalMats.get(m);
+        if (orig) m.material = orig as THREE.Material;
+      });
+    }
+
+    pcbCanvas.addEventListener('mousemove', (e) => {
+      const rect = pcbCanvas.getBoundingClientRect();
+      pcbMouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+      pcbMouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+
+      pcbRaycaster.setFromCamera(pcbMouse, pcbCamera);
+      const intersects = pcbRaycaster.intersectObjects(pcbMeshes, false);
+
+      const containerRect = pcbContainer.getBoundingClientRect();
+      const cx = e.clientX - containerRect.left;
+      const cy = e.clientY - containerRect.top;
+      pcbTooltip.style.left = (cx + 16) + 'px';
+      pcbTooltip.style.top = (cy - 10) + 'px';
+
+      if (intersects.length > 0) {
+        const hit = intersects[0].object as THREE.Mesh;
+        const groupName = pcbMeshToGroup.get(hit) || null;
+        if (groupName && groupName !== pcbCurrentGroup) {
+          pcbCurrentGroup = groupName;
+          pcbHighlightGroup(groupName);
+          pcbTooltipTitle.textContent = pcbMeshNames.get(hit) || hit.name;
+          pcbTooltip.style.opacity = '1';
+        }
+        pcbCanvas.style.cursor = 'pointer';
+      } else {
+        if (pcbCurrentGroup) {
+          pcbCurrentGroup = null;
+          pcbClearHighlight();
+          pcbTooltip.style.opacity = '0';
+        }
+        pcbCanvas.style.cursor = 'grab';
+      }
+    });
+
+    pcbCanvas.addEventListener('mouseleave', () => {
+      if (pcbCurrentGroup) {
+        pcbCurrentGroup = null;
+        pcbClearHighlight();
+      }
+      pcbTooltip.style.opacity = '0';
+      pcbCanvas.style.cursor = 'grab';
+    });
+
+    // Animation loop
+    function pcbAnimate() {
+      requestAnimationFrame(pcbAnimate);
+      pcbControls.update();
+      pcbRenderer.render(pcbScene, pcbCamera);
+    }
+    pcbAnimate();
+
+    // Resize
+    new ResizeObserver(() => {
+      const w = pcbContainer.clientWidth;
+      const h = pcbContainer.clientHeight;
+      pcbCamera.aspect = w / h;
+      pcbCamera.updateProjectionMatrix();
+      pcbRenderer.setSize(w, h);
+    }).observe(pcbContainer);
   </script>
 </Layout>
