@@ -4,17 +4,26 @@ import '../styles/global.css';
 ---
 
 <Layout title="TTB Aerospace">
+  <!-- Starfield background -->
+  <div id="starfield" aria-hidden="true"></div>
+
+  <!-- Scroll progress bar -->
+  <div id="scroll-progress"></div>
+  <!-- Custom cursor -->
+  <div id="cursor-dot" aria-hidden="true"></div>
+  <div id="cursor-glow"></div>
+
   <!-- Navigation -->
   <nav id="navbar" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300">
     <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
       <a href="#hero" class="hover:opacity-80 transition-opacity">
-        <img src="/images/logo-new.png" alt="TTB Aerospace" class="h-8 w-auto" />
+        <img src="/images/logo-new.png" alt="TTB Aerospace" class="h-12 w-auto" />
       </a>
       <div class="hidden md:flex items-center gap-8">
-        <a href="#vehicle" class="text-sm text-[var(--color-text-secondary)] hover:text-white transition-colors uppercase tracking-widest">Vehicle</a>
-        <a href="#avionics" class="text-sm text-[var(--color-text-secondary)] hover:text-white transition-colors uppercase tracking-widest">Avionics</a>
-        <a href="#hardware" class="text-sm text-[var(--color-text-secondary)] hover:text-white transition-colors uppercase tracking-widest">Hardware</a>
-        <a href="#featured" class="text-sm text-[var(--color-text-secondary)] hover:text-white transition-colors uppercase tracking-widest">Featured</a>
+        <a href="#vehicle" data-section="vehicle" class="nav-link text-sm text-[var(--color-text-secondary)] hover:text-white transition-colors uppercase tracking-widest">Vehicle</a>
+        <a href="#avionics" data-section="avionics" class="nav-link text-sm text-[var(--color-text-secondary)] hover:text-white transition-colors uppercase tracking-widest">Avionics</a>
+        <a href="#hardware" data-section="hardware" class="nav-link text-sm text-[var(--color-text-secondary)] hover:text-white transition-colors uppercase tracking-widest">Hardware</a>
+        <a href="#featured" data-section="featured" class="nav-link text-sm text-[var(--color-text-secondary)] hover:text-white transition-colors uppercase tracking-widest">Featured</a>
       </div>
       <button id="mobile-menu-btn" class="md:hidden text-white">
         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -44,8 +53,8 @@ import '../styles/global.css';
     <!-- Hero content -->
     <div class="relative z-20 text-center px-6">
       <h1 class="text-3xl sm:text-5xl md:text-7xl font-bold mb-4 tracking-tight" style="font-family: var(--font-heading)">TTB AEROSPACE</h1>
-      <p class="text-[var(--color-text-secondary)] text-lg md:text-xl tracking-wide max-w-2xl mx-auto" style="font-family: var(--font-heading)">
-        Making and Launching Advanced Model Rocket Components
+      <p id="hero-subtitle" class="text-[var(--color-text-secondary)] text-lg md:text-xl tracking-wide max-w-2xl mx-auto" style="font-family: var(--font-heading)">
+        <span id="typed-text"></span><span class="typed-cursor"></span>
       </p>
     </div>
     <!-- Scroll indicator -->
@@ -58,12 +67,12 @@ import '../styles/global.css';
   </section>
 
   <!-- Vehicle Section — LLL info left, 3D rocket right -->
-  <section id="vehicle" class="py-16 px-6">
+  <section id="vehicle" class="py-16 px-6 bg-transparent">
     <div class="max-w-7xl mx-auto">
       <div class="mb-10 reveal">
         <p class="text-[var(--color-accent)] text-sm uppercase tracking-widest mb-3" style="font-family: var(--font-mono)">01 // Vehicle</p>
         <h2 class="text-4xl md:text-5xl font-bold mb-4" style="font-family: var(--font-heading)">LLL Rocket</h2>
-        <div class="w-20 h-0.5 bg-[var(--color-accent)]"></div>
+        <div class="w-20 h-0.5 bg-[var(--color-accent)] accent-line"></div>
       </div>
 
       <div class="grid lg:grid-cols-2 gap-8 items-start">
@@ -78,54 +87,56 @@ import '../styles/global.css';
           </p>
 
           <!-- Stats -->
-          <div class="grid grid-cols-3 gap-4 mb-6">
-            <div class="bg-[var(--color-surface)] border border-[var(--color-surface-border)] rounded-lg p-4 text-center">
-              <p class="text-base md:text-2xl font-bold text-white" style="font-family: var(--font-heading)">650g</p>
+          <div class="grid grid-cols-3 gap-4 mb-6 reveal-stagger">
+            <div class="bg-[#151515] border border-[var(--color-surface-border)] rounded-lg p-4 text-center">
+              <p class="text-base md:text-2xl font-bold text-white counter-value" data-target="650" data-suffix="g" style="font-family: var(--font-heading)">650g</p>
               <p class="text-xs text-[var(--color-text-secondary)] mt-1" style="font-family: var(--font-mono)">Dry Mass</p>
             </div>
-            <div class="bg-[var(--color-surface)] border border-[var(--color-surface-border)] rounded-lg p-4 text-center">
-              <p class="text-base md:text-2xl font-bold text-white" style="font-family: var(--font-heading)">0.056</p>
+            <div class="bg-[#151515] border border-[var(--color-surface-border)] rounded-lg p-4 text-center">
+              <p class="text-base md:text-2xl font-bold text-white counter-value" data-target="0.056" data-decimals="3" style="font-family: var(--font-heading)">0.056</p>
               <p class="text-xs text-[var(--color-text-secondary)] mt-1" style="font-family: var(--font-mono)">MMOI kg/m²</p>
             </div>
-            <div class="bg-[var(--color-surface)] border border-[var(--color-surface-border)] rounded-lg p-4 text-center">
-              <p class="text-base md:text-2xl font-bold text-white" style="font-family: var(--font-heading)">80cm</p>
+            <div class="bg-[#151515] border border-[var(--color-surface-border)] rounded-lg p-4 text-center">
+              <p class="text-base md:text-2xl font-bold text-white counter-value" data-target="80" data-suffix="cm" style="font-family: var(--font-heading)">80cm</p>
               <p class="text-xs text-[var(--color-text-secondary)] mt-1" style="font-family: var(--font-mono)">Length</p>
             </div>
           </div>
 
           <!-- Flight Log -->
-          <h4 class="text-lg font-semibold mb-3" style="font-family: var(--font-heading)">Flight Log</h4>
-          <table class="w-full text-left">
-            <thead>
-              <tr class="border-b border-[var(--color-surface-border)]">
-                <th class="py-1.5 pr-3 text-xs text-[var(--color-text-secondary)] uppercase tracking-wider">Flight</th>
-                <th class="py-1.5 pr-3 text-xs text-[var(--color-text-secondary)] uppercase tracking-wider">Result</th>
-                <th class="py-1.5 pr-3 text-xs text-[var(--color-text-secondary)] uppercase tracking-wider">Motors</th>
-                <th class="py-1.5 text-xs text-[var(--color-text-secondary)] uppercase tracking-wider">Notes</th>
-              </tr>
-            </thead>
-            <tbody class="text-sm">
-              <tr class="border-b border-[var(--color-surface-border)]/50"><td class="py-1.5 pr-3 text-white">LT-1</td><td class="py-1.5 pr-3 text-yellow-500">Partial Success</td><td class="py-1.5 pr-3 text-[var(--color-text-secondary)]">2x Estes E12</td><td class="py-1.5 text-[var(--color-text-secondary)]">—</td></tr>
-              <tr class="border-b border-[var(--color-surface-border)]/50"><td class="py-1.5 pr-3 text-white">LT-2</td><td class="py-1.5 pr-3 text-yellow-500">Partial Success</td><td class="py-1.5 pr-3 text-[var(--color-text-secondary)]">2x Estes E12</td><td class="py-1.5 text-[var(--color-text-secondary)]">—</td></tr>
-              <tr class="border-b border-[var(--color-surface-border)]/50"><td class="py-1.5 pr-3 text-white">LT-3</td><td class="py-1.5 pr-3 text-yellow-500">Partial Success</td><td class="py-1.5 pr-3 text-[var(--color-text-secondary)]">2x Estes E12</td><td class="py-1.5 text-[var(--color-text-secondary)]">—</td></tr>
-              <tr class="border-b border-[var(--color-surface-border)]/50"><td class="py-1.5 pr-3 text-white">LT-4</td><td class="py-1.5 pr-3 text-yellow-500">Partial Success</td><td class="py-1.5 pr-3 text-[var(--color-text-secondary)]">2x Estes E12</td><td class="py-1.5 text-[var(--color-text-secondary)]">—</td></tr>
-              <tr class="border-b border-[var(--color-surface-border)]/50"><td class="py-1.5 pr-3 text-white">LT-5</td><td class="py-1.5 pr-3 text-yellow-500">Partial Success</td><td class="py-1.5 pr-3 text-[var(--color-text-secondary)]">2x Estes E12</td><td class="py-1.5 text-[var(--color-text-secondary)]">—</td></tr>
-              <tr class="border-b border-[var(--color-surface-border)]/50"><td class="py-1.5 pr-3 text-white">LT-6</td><td class="py-1.5 pr-3 text-yellow-500">Partial Success</td><td class="py-1.5 pr-3 text-[var(--color-text-secondary)]">2x Estes E12</td><td class="py-1.5 text-[var(--color-text-secondary)]">—</td></tr>
-              <tr class="border-b border-[var(--color-surface-border)]/50"><td class="py-1.5 pr-3 text-white">LT-7</td><td class="py-1.5 pr-3 text-yellow-500">Partial Success</td><td class="py-1.5 pr-3 text-[var(--color-text-secondary)]">2x Estes E12</td><td class="py-1.5 text-[var(--color-text-secondary)]">—</td></tr>
-              <tr class="border-b border-[var(--color-surface-border)]/50">
-                <td class="py-1.5 pr-3 text-white">LT-8</td>
-                <td class="py-1.5 pr-3 text-green-500">Vertical Landing</td>
-                <td class="py-1.5 pr-3 text-[var(--color-text-secondary)]">2x Estes E12</td>
-                <td class="py-1.5"><a href="https://www.youtube.com/watch?v=1GanrexRyVY&t=41s" target="_blank" rel="noopener" class="text-[var(--color-accent)] hover:text-[var(--color-accent-bright)] transition-colors">Watch →</a></td>
-              </tr>
-              <tr><td class="py-1.5 pr-3 text-white">LT-9</td><td class="py-1.5 pr-3 text-green-500">Vertical Landing</td><td class="py-1.5 pr-3 text-[var(--color-text-secondary)]">2x Estes E12</td><td class="py-1.5 text-[var(--color-text-secondary)]">—</td></tr>
-            </tbody>
-          </table>
+          <div class="bg-black border border-[var(--color-surface-border)] rounded-lg p-5">
+            <h4 class="text-lg font-semibold mb-3" style="font-family: var(--font-heading)">Flight Log</h4>
+            <table class="w-full text-left">
+              <thead>
+                <tr class="border-b border-[var(--color-surface-border)]">
+                  <th class="py-1.5 pr-3 text-xs text-[var(--color-text-secondary)] uppercase tracking-wider">Flight</th>
+                  <th class="py-1.5 pr-3 text-xs text-[var(--color-text-secondary)] uppercase tracking-wider">Result</th>
+                  <th class="py-1.5 pr-3 text-xs text-[var(--color-text-secondary)] uppercase tracking-wider">Motors</th>
+                  <th class="py-1.5 text-xs text-[var(--color-text-secondary)] uppercase tracking-wider">Notes</th>
+                </tr>
+              </thead>
+              <tbody class="text-sm">
+                <tr class="border-b border-[var(--color-surface-border)]/50"><td class="py-1.5 pr-3 text-white">LT-1</td><td class="py-1.5 pr-3 text-yellow-500">Partial Success</td><td class="py-1.5 pr-3 text-[var(--color-text-secondary)]">2x Estes E12</td><td class="py-1.5 text-[var(--color-text-secondary)]">—</td></tr>
+                <tr class="border-b border-[var(--color-surface-border)]/50"><td class="py-1.5 pr-3 text-white">LT-2</td><td class="py-1.5 pr-3 text-yellow-500">Partial Success</td><td class="py-1.5 pr-3 text-[var(--color-text-secondary)]">2x Estes E12</td><td class="py-1.5 text-[var(--color-text-secondary)]">—</td></tr>
+                <tr class="border-b border-[var(--color-surface-border)]/50"><td class="py-1.5 pr-3 text-white">LT-3</td><td class="py-1.5 pr-3 text-yellow-500">Partial Success</td><td class="py-1.5 pr-3 text-[var(--color-text-secondary)]">2x Estes E12</td><td class="py-1.5 text-[var(--color-text-secondary)]">—</td></tr>
+                <tr class="border-b border-[var(--color-surface-border)]/50"><td class="py-1.5 pr-3 text-white">LT-4</td><td class="py-1.5 pr-3 text-yellow-500">Partial Success</td><td class="py-1.5 pr-3 text-[var(--color-text-secondary)]">2x Estes E12</td><td class="py-1.5 text-[var(--color-text-secondary)]">—</td></tr>
+                <tr class="border-b border-[var(--color-surface-border)]/50"><td class="py-1.5 pr-3 text-white">LT-5</td><td class="py-1.5 pr-3 text-yellow-500">Partial Success</td><td class="py-1.5 pr-3 text-[var(--color-text-secondary)]">2x Estes E12</td><td class="py-1.5 text-[var(--color-text-secondary)]">—</td></tr>
+                <tr class="border-b border-[var(--color-surface-border)]/50"><td class="py-1.5 pr-3 text-white">LT-6</td><td class="py-1.5 pr-3 text-yellow-500">Partial Success</td><td class="py-1.5 pr-3 text-[var(--color-text-secondary)]">2x Estes E12</td><td class="py-1.5 text-[var(--color-text-secondary)]">—</td></tr>
+                <tr class="border-b border-[var(--color-surface-border)]/50"><td class="py-1.5 pr-3 text-white">LT-7</td><td class="py-1.5 pr-3 text-yellow-500">Partial Success</td><td class="py-1.5 pr-3 text-[var(--color-text-secondary)]">2x Estes E12</td><td class="py-1.5 text-[var(--color-text-secondary)]">—</td></tr>
+                <tr class="border-b border-[var(--color-surface-border)]/50">
+                  <td class="py-1.5 pr-3 text-white">LT-8</td>
+                  <td class="py-1.5 pr-3 text-green-500">Vertical Landing</td>
+                  <td class="py-1.5 pr-3 text-[var(--color-text-secondary)]">2x Estes E12</td>
+                  <td class="py-1.5"><a href="https://www.youtube.com/watch?v=1GanrexRyVY&t=41s" target="_blank" rel="noopener" class="text-[var(--color-accent)] hover:text-[var(--color-accent-bright)] transition-colors">Watch →</a></td>
+                </tr>
+                <tr><td class="py-1.5 pr-3 text-white">LT-9</td><td class="py-1.5 pr-3 text-green-500">Vertical Landing</td><td class="py-1.5 pr-3 text-[var(--color-text-secondary)]">2x Estes E12</td><td class="py-1.5 text-[var(--color-text-secondary)]">—</td></tr>
+              </tbody>
+            </table>
+          </div>
         </div>
 
         <!-- Right: Interactive 3D Rocket Viewer -->
         <div class="reveal lg:sticky lg:top-20 lg:-mt-20">
-          <div id="rocket-container" class="relative w-full aspect-[5/6] bg-[var(--color-surface)] border border-[var(--color-surface-border)] rounded-xl overflow-hidden">
+          <div id="rocket-container" class="relative w-full aspect-[5/6] bg-[#111111] border border-[var(--color-surface-border)] rounded-xl overflow-hidden">
             <canvas id="rocket-canvas" class="w-full h-full"></canvas>
             <!-- Loading overlay -->
             <div id="loading-overlay" class="absolute inset-0 flex flex-col items-center justify-center bg-[var(--color-bg-primary)]">
@@ -154,34 +165,36 @@ import '../styles/global.css';
             <p class="text-[var(--color-text-secondary)] leading-relaxed mb-6">
               Successor to Alto A, 50% longer, designed for higher and faster flights.
             </p>
-            <div class="grid grid-cols-3 gap-4 mb-6">
-              <div class="bg-[var(--color-surface)] border border-[var(--color-surface-border)] rounded-lg p-4 text-center">
-                <p class="text-base md:text-2xl font-bold text-white" style="font-family: var(--font-heading)">615g</p>
+            <div class="grid grid-cols-3 gap-4 mb-6 reveal-stagger">
+              <div class="bg-[#151515] border border-[var(--color-surface-border)] rounded-lg p-4 text-center">
+                <p class="text-base md:text-2xl font-bold text-white counter-value" data-target="615" data-suffix="g" style="font-family: var(--font-heading)">615g</p>
                 <p class="text-xs text-[var(--color-text-secondary)] mt-1" style="font-family: var(--font-mono)">Dry Mass</p>
               </div>
-              <div class="bg-[var(--color-surface)] border border-[var(--color-surface-border)] rounded-lg p-4 text-center">
-                <p class="text-base md:text-2xl font-bold text-white" style="font-family: var(--font-heading)">0.060</p>
+              <div class="bg-[#151515] border border-[var(--color-surface-border)] rounded-lg p-4 text-center">
+                <p class="text-base md:text-2xl font-bold text-white counter-value" data-target="0.060" data-decimals="3" style="font-family: var(--font-heading)">0.060</p>
                 <p class="text-xs text-[var(--color-text-secondary)] mt-1" style="font-family: var(--font-mono)">MMOI kg/m²</p>
               </div>
-              <div class="bg-[var(--color-surface)] border border-[var(--color-surface-border)] rounded-lg p-4 text-center">
-                <p class="text-base md:text-2xl font-bold text-white" style="font-family: var(--font-heading)">75cm</p>
+              <div class="bg-[#151515] border border-[var(--color-surface-border)] rounded-lg p-4 text-center">
+                <p class="text-base md:text-2xl font-bold text-white counter-value" data-target="75" data-suffix="cm" style="font-family: var(--font-heading)">75cm</p>
                 <p class="text-xs text-[var(--color-text-secondary)] mt-1" style="font-family: var(--font-mono)">Length</p>
               </div>
             </div>
-            <h4 class="text-lg font-semibold mb-3" style="font-family: var(--font-heading)">Flight Log</h4>
-            <table class="w-full text-left">
-              <thead>
-                <tr class="border-b border-[var(--color-surface-border)]">
-                  <th class="py-1.5 pr-3 text-xs text-[var(--color-text-secondary)] uppercase tracking-wider">Flight</th>
-                  <th class="py-1.5 pr-3 text-xs text-[var(--color-text-secondary)] uppercase tracking-wider">Result</th>
-                  <th class="py-1.5 text-xs text-[var(--color-text-secondary)] uppercase tracking-wider">Motors</th>
-                </tr>
-              </thead>
-              <tbody class="text-sm">
-                <tr class="border-b border-[var(--color-surface-border)]/50"><td class="py-1.5 pr-3 text-white">B TF-1</td><td class="py-1.5 pr-3 text-green-500">Success</td><td class="py-1.5 text-[var(--color-text-secondary)]">Estes E12</td></tr>
-                <tr><td class="py-1.5 pr-3 text-white">B TF-2</td><td class="py-1.5 pr-3 text-yellow-500">Partial Success</td><td class="py-1.5 text-[var(--color-text-secondary)]">Apogee F10</td></tr>
-              </tbody>
-            </table>
+            <div class="bg-black border border-[var(--color-surface-border)] rounded-lg p-5">
+              <h4 class="text-lg font-semibold mb-3" style="font-family: var(--font-heading)">Flight Log</h4>
+              <table class="w-full text-left">
+                <thead>
+                  <tr class="border-b border-[var(--color-surface-border)]">
+                    <th class="py-1.5 pr-3 text-xs text-[var(--color-text-secondary)] uppercase tracking-wider">Flight</th>
+                    <th class="py-1.5 pr-3 text-xs text-[var(--color-text-secondary)] uppercase tracking-wider">Result</th>
+                    <th class="py-1.5 text-xs text-[var(--color-text-secondary)] uppercase tracking-wider">Motors</th>
+                  </tr>
+                </thead>
+                <tbody class="text-sm">
+                  <tr class="border-b border-[var(--color-surface-border)]/50"><td class="py-1.5 pr-3 text-white">B TF-1</td><td class="py-1.5 pr-3 text-green-500">Success</td><td class="py-1.5 text-[var(--color-text-secondary)]">Estes E12</td></tr>
+                  <tr><td class="py-1.5 pr-3 text-white">B TF-2</td><td class="py-1.5 pr-3 text-yellow-500">Partial Success</td><td class="py-1.5 text-[var(--color-text-secondary)]">Apogee F10</td></tr>
+                </tbody>
+              </table>
+            </div>
           </div>
           <div>
             <div class="w-full bg-[var(--color-surface)] border border-[var(--color-surface-border)] rounded-xl overflow-hidden">
@@ -194,12 +207,12 @@ import '../styles/global.css';
   </section>
 
   <!-- Avionics Section -->
-  <section id="avionics" class="py-16 px-6 bg-[var(--color-bg-secondary)]">
+  <section id="avionics" class="py-16 px-6 bg-[#1a1a1a]/90">
     <div class="max-w-6xl mx-auto">
       <div class="mb-10 reveal">
         <p class="text-[var(--color-accent)] text-sm uppercase tracking-widest mb-3" style="font-family: var(--font-mono)">02 // Avionics</p>
         <h2 class="text-4xl md:text-5xl font-bold mb-4" style="font-family: var(--font-heading)">Flight Computers</h2>
-        <div class="w-20 h-0.5 bg-[var(--color-accent)]"></div>
+        <div class="w-20 h-0.5 bg-[var(--color-accent)] accent-line"></div>
       </div>
 
       <div class="reveal grid md:grid-cols-[280px_1fr] gap-6">
@@ -222,7 +235,7 @@ import '../styles/global.css';
         <!-- Right: Avionics detail panels -->
         <div class="relative">
           <!-- Aurora Orbiton -->
-          <div class="avionics-panel bg-[var(--color-surface)] border border-[var(--color-surface-border)] rounded-xl p-6" id="panel-orbiton">
+          <div class="avionics-panel bg-[#151515] border border-[var(--color-surface-border)] rounded-xl p-6" id="panel-orbiton">
             <div class="flex items-center justify-between mb-5 flex-wrap gap-3">
               <div>
                 <h3 class="text-xl font-semibold" style="font-family: var(--font-heading)">Aurora Orbiton Edition</h3>
@@ -241,7 +254,7 @@ import '../styles/global.css';
                 <li class="flex gap-3"><span class="text-[var(--color-accent)]">▸</span><span class="text-[var(--color-text-secondary)]"><span class="text-white">83×44mm</span>, USB-C</span></li>
               </ul>
               <div class="grid md:grid-cols-2 gap-4 h-80">
-                <div id="orbiton-viewer" class="relative bg-black/30 border border-[var(--color-surface-border)] rounded-lg overflow-hidden h-full">
+                <div id="orbiton-viewer" class="relative bg-[#111111] border border-[var(--color-surface-border)] rounded-lg overflow-hidden h-full">
                   <canvas id="orbiton-canvas" class="w-full h-full cursor-grab"></canvas>
                   <div id="orbiton-loading" class="absolute inset-0 flex items-center justify-center">
                     <p class="text-[var(--color-text-secondary)] text-sm" style="font-family: var(--font-mono)">Loading PCB...</p>
@@ -258,7 +271,7 @@ import '../styles/global.css';
           </div>
 
           <!-- Aurora PV1 -->
-          <div class="avionics-panel bg-[var(--color-surface)] border border-[var(--color-surface-border)] rounded-xl p-6 hidden" id="panel-pv1">
+          <div class="avionics-panel bg-[#151515] border border-[var(--color-surface-border)] rounded-xl p-6 hidden" id="panel-pv1">
             <div class="flex items-center justify-between mb-5 flex-wrap gap-3">
               <div>
                 <h3 class="text-xl font-semibold" style="font-family: var(--font-heading)">Aurora PV1</h3>
@@ -284,7 +297,7 @@ import '../styles/global.css';
           </div>
 
           <!-- Aurora DV5 -->
-          <div class="avionics-panel bg-[var(--color-surface)] border border-[var(--color-surface-border)] rounded-xl p-6 hidden" id="panel-dv5">
+          <div class="avionics-panel bg-[#151515] border border-[var(--color-surface-border)] rounded-xl p-6 hidden" id="panel-dv5">
             <div class="flex items-center justify-between mb-5 flex-wrap gap-3">
               <div>
                 <h3 class="text-xl font-semibold" style="font-family: var(--font-heading)">Aurora DV5</h3>
@@ -314,12 +327,12 @@ import '../styles/global.css';
   </section>
 
   <!-- Hardware Section -->
-  <section id="hardware" class="py-16 px-6">
+  <section id="hardware" class="py-16 px-6 bg-transparent">
     <div class="max-w-6xl mx-auto">
       <div class="mb-10 reveal">
         <p class="text-[var(--color-accent)] text-sm uppercase tracking-widest mb-3" style="font-family: var(--font-mono)">03 // Hardware</p>
         <h2 class="text-4xl md:text-5xl font-bold mb-4" style="font-family: var(--font-heading)">Thrust Vector Control</h2>
-        <div class="w-20 h-0.5 bg-[var(--color-accent)]"></div>
+        <div class="w-20 h-0.5 bg-[var(--color-accent)] accent-line"></div>
       </div>
 
       <div class="reveal grid md:grid-cols-2 gap-12">
@@ -361,7 +374,7 @@ import '../styles/global.css';
         </div>
         <div>
           <!-- 3D TVC Mount Viewer -->
-          <div id="tvc-viewer" class="relative w-full aspect-square bg-[var(--color-surface)] border border-[var(--color-surface-border)] rounded-lg overflow-hidden">
+          <div id="tvc-viewer" class="relative w-full aspect-square bg-[#111111] border border-[var(--color-surface-border)] rounded-lg overflow-hidden">
             <canvas id="tvc-canvas" class="w-full h-full cursor-grab"></canvas>
             <div id="tvc-loading" class="absolute inset-0 flex items-center justify-center bg-[var(--color-surface)]">
               <p class="text-[var(--color-text-secondary)] text-sm animate-pulse" style="font-family: var(--font-mono)">Loading TVC Mount...</p>
@@ -379,7 +392,7 @@ import '../styles/global.css';
   </section>
 
   <!-- Featured Section — Carousel -->
-  <section id="featured" class="py-16 px-6 bg-[var(--color-bg-secondary)]">
+  <section id="featured" class="py-16 px-6 bg-[#1a1a1a]/90">
     <div class="max-w-5xl mx-auto">
       <div class="mb-10 reveal text-center">
         <p class="text-[var(--color-accent)] text-sm uppercase tracking-widest mb-3" style="font-family: var(--font-mono)">04 // Featured</p>
@@ -528,6 +541,223 @@ import '../styles/global.css';
     }
   </script>
 
+  <!-- Starfield Script -->
+  <script is:inline>
+    (function() {
+      var container = document.getElementById('starfield');
+      if (!container) return;
+      var canvas = document.createElement('canvas');
+      canvas.style.width = '100%';
+      canvas.style.height = '100%';
+      container.appendChild(canvas);
+      var ctx = canvas.getContext('2d');
+
+      var NUM_STARS = 32;
+      var GRAVITY_RADIUS = 90;
+      var GRAVITY_STRENGTH = 2.0;
+      var EVENT_HORIZON = 5;
+      var BLEND_ZONE = 18; // distance from event horizon where deflection starts blending in
+      var TRAIL_MAX = 60;
+      var DAMPING = 0.99;
+      var HOME_PULL = 0.02;
+
+      var canvasW, canvasH, dpr;
+      var mouseX = -9999, mouseY = -9999;
+      var prevMouseX = -9999, prevMouseY = -9999;
+      var cursorSpeed = 0; // smoothed cursor speed
+
+      document.addEventListener('mousemove', function(e) {
+        prevMouseX = mouseX; prevMouseY = mouseY;
+        mouseX = e.clientX; mouseY = e.clientY;
+        var mdx = mouseX - prevMouseX;
+        var mdy = mouseY - prevMouseY;
+        if (prevMouseX > -9000) cursorSpeed = Math.sqrt(mdx * mdx + mdy * mdy);
+      });
+      document.addEventListener('mouseleave', function() { mouseX = -9999; mouseY = -9999; cursorSpeed = 0; });
+
+      function resize() {
+        dpr = window.devicePixelRatio || 1;
+        canvasW = window.innerWidth;
+        canvasH = window.innerHeight;
+        canvas.width = canvasW * dpr;
+        canvas.height = canvasH * dpr;
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      }
+      resize();
+      window.addEventListener('resize', resize);
+
+      var stars = [];
+      for (var i = 0; i < NUM_STARS; i++) {
+        var cx = Math.random() * canvasW;
+        var cy = Math.random() * canvasH;
+        var orbitR = (Math.random() * 0.4 + 0.1) * Math.min(canvasW, canvasH) * 0.3;
+        var angle = Math.random() * Math.PI * 2;
+        stars.push({
+          cx: cx, cy: cy, orbitR: orbitR, angle: angle,
+          speed: (Math.random() * 0.003 + 0.001) * (Math.random() < 0.5 ? 1 : -1),
+          size: Math.random() * 1.2 + 0.3,
+          px: cx + Math.cos(angle) * orbitR,
+          py: cy + Math.sin(angle) * orbitR,
+          vx: 0, vy: 0,
+          trail: [],
+          active: false // is this star being affected by gravity
+        });
+      }
+
+      function draw() {
+        ctx.clearRect(0, 0, canvasW, canvasH);
+
+        // Smooth cursor speed (decays each frame, spikes on mousemove)
+        cursorSpeed *= 0.8;
+        // Gravity multiplier: full gravity when still, near-zero when flicking fast
+        var gravityScale = 1 / (1 + cursorSpeed * 0.15);
+
+        for (var i = 0; i < stars.length; i++) {
+          var s = stars[i];
+
+          // Natural background orbit (home position)
+          s.angle += s.speed;
+          var homeX = s.cx + Math.cos(s.angle) * s.orbitR;
+          var homeY = s.cy + Math.sin(s.angle) * s.orbitR;
+          homeX = ((homeX % canvasW) + canvasW) % canvasW;
+          homeY = ((homeY % canvasH) + canvasH) % canvasH;
+
+          // Vector from head to cursor
+          var toCursorX = mouseX - s.px;
+          var toCursorY = mouseY - s.py;
+          var distToCursor = Math.sqrt(toCursorX * toCursorX + toCursorY * toCursorY);
+
+          // Vector from head to home
+          var toHomeX = homeX - s.px;
+          var toHomeY = homeY - s.py;
+          var distToHome = Math.sqrt(toHomeX * toHomeX + toHomeY * toHomeY);
+
+          var inRange = distToCursor < GRAVITY_RADIUS && distToCursor > 1;
+
+          if (inRange) {
+            // === GRAVITY: pull toward cursor, inverse-square-ish ===
+            s.active = true;
+            var normDist = distToCursor / GRAVITY_RADIUS; // 0 = at cursor, 1 = at edge
+            // Stronger pull when closer (inverse square, clamped)
+            var force = GRAVITY_STRENGTH / (normDist * normDist + 0.05);
+            force = Math.min(force, 8);
+            // Scale down gravity when cursor is moving fast
+            force *= gravityScale;
+            var ux = toCursorX / distToCursor;
+            var uy = toCursorY / distToCursor;
+            s.vx += ux * force * 0.016;
+            s.vy += uy * force * 0.016;
+
+            // Gradual deflection: as star enters blend zone, progressively
+            // convert radial velocity into tangential (orbital) velocity.
+            // At EVENT_HORIZON it's fully tangential. This prevents a hard snap.
+            if (distToCursor < EVENT_HORIZON + BLEND_ZONE) {
+              // blend: 0 at outer edge of blend zone, 1 at event horizon
+              var blend = 1 - Math.max(0, distToCursor - EVENT_HORIZON) / BLEND_ZONE;
+
+              var radX = -ux; // radial outward unit
+              var radY = -uy;
+              var tanX = -radY; // tangent (clockwise)
+              var tanY = radX;
+              var vRad = s.vx * radX + s.vy * radY;
+              var vTan = s.vx * tanX + s.vy * tanY;
+
+              // Convert inward radial velocity into tangential — conserves speed
+              // so the star smoothly curves rather than stalling
+              if (vRad < 0) {
+                var transfer = -vRad * blend; // amount to transfer
+                // Remove from radial, add to tangential (pick consistent direction)
+                if (vTan === 0) vTan = 0.01; // break tie
+                var tanSign = vTan > 0 ? 1 : -1;
+                s.vx += radX * transfer + tanX * tanSign * transfer;
+                s.vy += radY * transfer + tanY * tanSign * transfer;
+              }
+
+              // Push head out if it dips inside event horizon
+              if (distToCursor < EVENT_HORIZON) {
+                var pushOut = (EVENT_HORIZON - distToCursor) * 0.4;
+                s.px += (-ux) * pushOut;
+                s.py += (-uy) * pushOut;
+              }
+            }
+
+            // Damping
+            s.vx *= DAMPING;
+            s.vy *= DAMPING;
+
+          } else {
+            // === NO GRAVITY: spring back home ===
+            if (s.active) {
+              // Just left gravity — kill most velocity, small random kick
+              var kickAngle = Math.atan2(s.vy, s.vx) + (Math.random() - 0.5) * 1.5;
+              var kickSpeed = Math.min(1.5, Math.sqrt(s.vx * s.vx + s.vy * s.vy) * 0.2);
+              s.vx = Math.cos(kickAngle) * kickSpeed;
+              s.vy = Math.sin(kickAngle) * kickSpeed;
+              s.active = false;
+            }
+            // Spring toward home position
+            s.vx += toHomeX * HOME_PULL;
+            s.vy += toHomeY * HOME_PULL;
+            // Heavy damping — settle quickly, no drifting
+            s.vx *= 0.88;
+            s.vy *= 0.88;
+          }
+
+          // Integrate position
+          s.px += s.vx;
+          s.py += s.vy;
+
+          // Trail: only record when actively being pulled by gravity
+          var spd = Math.sqrt(s.vx * s.vx + s.vy * s.vy);
+          if (s.active && spd > 0.5) {
+            s.trail.push({ x: s.px, y: s.py });
+            if (s.trail.length > TRAIL_MAX) s.trail.shift();
+          } else {
+            // Shrink trail — faster when not in gravity
+            if (s.trail.length > 0) {
+              s.trail.shift();
+              if (!s.active && s.trail.length > 0) s.trail.shift();
+              if (!s.active && s.trail.length > 0) s.trail.shift();
+            }
+          }
+
+          // === RENDER ===
+          if (s.trail.length > 1) {
+            var len = s.trail.length;
+            for (var k = 0; k < len - 1; k++) {
+              var p0 = s.trail[k];
+              var p1 = s.trail[k + 1];
+              var frac = (k + 1) / len; // 0 = tail, 1 = head
+              var alpha = frac * frac;
+              alpha = Math.max(0.02, alpha);
+              var lw = s.size * (0.2 + frac * 1.6);
+              ctx.beginPath();
+              ctx.moveTo(p0.x, p0.y);
+              ctx.lineTo(p1.x, p1.y);
+              ctx.strokeStyle = 'rgba(255, 255, 255, ' + alpha.toFixed(3) + ')';
+              ctx.lineWidth = lw;
+              ctx.lineCap = 'round';
+              ctx.stroke();
+            }
+            // Head dot
+            ctx.beginPath();
+            ctx.arc(s.px, s.py, s.size * 1.2, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(255, 255, 255, 1)';
+            ctx.fill();
+          } else {
+            // Static dot
+            ctx.beginPath();
+            ctx.arc(s.px, s.py, s.size, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(255, 255, 255, 1)';
+            ctx.fill();
+          }
+        }
+        requestAnimationFrame(draw);
+      }
+      draw();
+    })();
+  </script>
+
   <!-- Three.js Script — Rocket Viewer in Vehicle Section -->
   <script>
     import * as THREE from 'three';
@@ -655,6 +885,7 @@ import '../styles/global.css';
     const raycaster = new THREE.Raycaster();
     const mouse = new THREE.Vector2();
 
+    let rocketPivot: THREE.Group | null = null;
     const loader = new GLTFLoader();
     loader.load(
       '/models/rocket.gltf',
@@ -714,18 +945,18 @@ import '../styles/global.css';
         const preCenter = preBox.getCenter(new THREE.Vector3());
         model.position.set(-preCenter.x, -preCenter.y, -preCenter.z);
 
-        const pivot = new THREE.Group();
-        pivot.add(model);
+        rocketPivot = new THREE.Group();
+        rocketPivot.add(model);
         const preSize = preBox.getSize(new THREE.Vector3());
         if (preSize.x > preSize.y && preSize.x > preSize.z) {
-          pivot.rotation.z = Math.PI / 2;
+          rocketPivot.rotation.z = Math.PI / 2;
         } else if (preSize.z > preSize.y && preSize.z > preSize.x) {
-          pivot.rotation.x = -Math.PI / 2;
+          rocketPivot.rotation.x = -Math.PI / 2;
         }
-        scene.add(pivot);
+        scene.add(rocketPivot);
 
         // Camera setup — focus on bottom third, zoomed in
-        const box = new THREE.Box3().setFromObject(pivot);
+        const box = new THREE.Box3().setFromObject(rocketPivot);
         const center = box.getCenter(new THREE.Vector3());
         const size = box.getSize(new THREE.Vector3());
         const bottomThirdCenterY = box.min.y + size.y * 0.2;
@@ -829,14 +1060,14 @@ import '../styles/global.css';
             hoverTooltip.style.opacity = '1';
           }
         }
-        canvas.style.cursor = 'pointer';
+        canvas.style.cursor = 'none';
       } else {
         if (currentGroup !== null) {
           currentGroup = null;
           clearHighlight();
           hoverTooltip.style.opacity = '0';
         }
-        canvas.style.cursor = 'grab';
+        canvas.style.cursor = 'none';
       }
     });
 
@@ -844,7 +1075,7 @@ import '../styles/global.css';
       currentGroup = null;
       clearHighlight();
       hoverTooltip.style.opacity = '0';
-      canvas.style.cursor = 'grab';
+      canvas.style.cursor = 'none';
     });
 
     // Click to navigate to section
@@ -858,9 +1089,14 @@ import '../styles/global.css';
       }
     });
 
-    // Animation loop
+    // Animation loop (with scroll-based auto-rotate around vertical axis)
+    const worldY = new THREE.Vector3(0, 1, 0);
     function animate() {
       requestAnimationFrame(animate);
+      if (rocketPivot) {
+        const delta = (window as any).__scrollDelta?.() || 0;
+        rocketPivot.rotateOnWorldAxis(worldY, delta * 0.0008);;
+      }
       controls.update();
       renderer.render(scene, camera);
     }
@@ -875,15 +1111,68 @@ import '../styles/global.css';
       renderer.setSize(w, h);
     });
 
-    // Navbar scroll effect — starts grey/translucent, fades to solid black
+    // === SCROLL PROGRESS BAR ===
+    const scrollProgress = document.getElementById('scroll-progress')!;
+
+    // === CURSOR GLOW (always) + DOT (only on 3D viewers) ===
+    const cursorDot = document.getElementById('cursor-dot')!;
+    const cursorGlow = document.getElementById('cursor-glow')!;
+
+    document.addEventListener('mousemove', (e) => {
+      const target = e.target as HTMLElement;
+      const on3D = target.closest('#rocket-container, #tvc-viewer, #orbiton-viewer');
+
+      cursorGlow.style.left = e.clientX + 'px';
+      cursorGlow.style.top = e.clientY + 'px';
+      cursorGlow.style.opacity = '1';
+
+      cursorDot.style.left = e.clientX + 'px';
+      cursorDot.style.top = e.clientY + 'px';
+      cursorDot.style.opacity = on3D ? '1' : '0';
+    });
+    document.addEventListener('mouseleave', () => {
+      cursorDot.style.opacity = '0';
+      cursorGlow.style.opacity = '0';
+    });
+
+    // === TYPED TEXT EFFECT ===
+    const typedEl = document.getElementById('typed-text')!;
+    const typedText = 'Making and Launching Advanced Model Rocket Components';
+    let charIndex = 0;
+    function typeNext() {
+      if (charIndex < typedText.length) {
+        typedEl.textContent += typedText[charIndex];
+        charIndex++;
+        setTimeout(typeNext, 35 + Math.random() * 25);
+      } else {
+        // Remove cursor after typing is done
+        const cursor = document.querySelector('.typed-cursor') as HTMLElement;
+        if (cursor) setTimeout(() => { cursor.style.opacity = '0'; }, 1500);
+      }
+    }
+    setTimeout(typeNext, 600);
+
+    // === NAVBAR — scroll effect + active section indicator ===
     const navbar = document.getElementById('navbar')!;
+    const navLinks = document.querySelectorAll('.nav-link') as NodeListOf<HTMLElement>;
+    const sections = ['vehicle', 'avionics', 'hardware', 'featured'];
     navbar.style.backgroundColor = 'rgba(30, 30, 30, 0.5)';
     navbar.style.backdropFilter = 'blur(4px)';
+
+    // === 3D AUTO-ROTATE ON SCROLL ===
+    let lastScrollY = window.scrollY;
+    let scrollDelta = 0;
+
     window.addEventListener('scroll', () => {
+      // Scroll progress
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      scrollProgress.style.width = (window.scrollY / docHeight * 100) + '%';
+
+      // Navbar background
       const scrollFraction = Math.min(window.scrollY / 400, 1);
       const opacity = 0.5 + scrollFraction * 0.5;
-      const bg = Math.round(30 - scrollFraction * 20); // 30 -> 10
-      const blur = 4 + scrollFraction * 8; // 4px -> 12px
+      const bg = Math.round(30 - scrollFraction * 20);
+      const blur = 4 + scrollFraction * 8;
       navbar.style.backgroundColor = `rgba(${bg}, ${bg}, ${bg}, ${opacity})`;
       navbar.style.backdropFilter = `blur(${blur}px)`;
       if (scrollFraction > 0.1) {
@@ -891,9 +1180,34 @@ import '../styles/global.css';
       } else {
         navbar.style.borderBottom = 'none';
       }
+
+      // Active section indicator
+      let currentSection = '';
+      for (const id of sections) {
+        const el = document.getElementById(id);
+        if (el && window.scrollY >= el.offsetTop - 200) currentSection = id;
+      }
+      navLinks.forEach((link) => {
+        if (link.dataset.section === currentSection) {
+          link.classList.add('active');
+        } else {
+          link.classList.remove('active');
+        }
+      });
+
+      // Scroll delta for 3D auto-rotate
+      scrollDelta = window.scrollY - lastScrollY;
+      lastScrollY = window.scrollY;
     });
 
-    // Mobile menu
+    // Expose scrollDelta for 3D viewers
+    (window as any).__scrollDelta = () => {
+      const d = scrollDelta;
+      scrollDelta *= 0.9; // decay
+      return d;
+    };
+
+    // === MOBILE MENU ===
     document.getElementById('mobile-menu-btn')!.addEventListener('click', () => {
       document.getElementById('mobile-menu')!.classList.toggle('hidden');
     });
@@ -901,13 +1215,12 @@ import '../styles/global.css';
       a.addEventListener('click', () => { document.getElementById('mobile-menu')!.classList.add('hidden'); });
     });
 
-    // Avionics tab switching
+    // === AVIONICS TAB SWITCHING (crossfade) ===
     const avionicsTabs = document.querySelectorAll('.avionics-tab');
     const avionicsPanels = document.querySelectorAll('.avionics-panel');
     avionicsTabs.forEach((tab) => {
       tab.addEventListener('click', () => {
         const target = (tab as HTMLElement).dataset.avionics;
-        // Update tab styles
         avionicsTabs.forEach((t) => {
           const el = t as HTMLElement;
           if (el.dataset.avionics === target) {
@@ -918,11 +1231,12 @@ import '../styles/global.css';
             el.classList.add('bg-[var(--color-surface)]', 'border-[var(--color-surface-border)]');
           }
         });
-        // Show/hide panels
         avionicsPanels.forEach((p) => {
           const panel = p as HTMLElement;
           if (panel.id === `panel-${target}`) {
             panel.classList.remove('hidden');
+            panel.classList.add('panel-entering');
+            panel.addEventListener('animationend', () => panel.classList.remove('panel-entering'), { once: true });
           } else {
             panel.classList.add('hidden');
           }
@@ -930,7 +1244,7 @@ import '../styles/global.css';
       });
     });
 
-    // Carousel
+    // === CAROUSEL ===
     const carouselTrack = document.getElementById('carousel-track')!;
     const carouselDots = document.querySelectorAll('.carousel-dot');
     const slideCount = 4;
@@ -956,7 +1270,7 @@ import '../styles/global.css';
       dot.addEventListener('click', () => goToSlide(Number((dot as HTMLElement).dataset.slide)));
     });
 
-    // Scroll reveal
+    // === SCROLL REVEAL (with stagger support) ===
     const observer = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
@@ -971,6 +1285,75 @@ import '../styles/global.css';
       (el as HTMLElement).style.transform = 'translateY(30px)';
       (el as HTMLElement).style.transition = 'opacity 0.6s ease, transform 0.6s ease';
       observer.observe(el);
+    });
+
+    // === STAGGERED REVEAL ===
+    const staggerObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          const el = entry.target as HTMLElement;
+          // Add stagger delays to children
+          Array.from(el.children).forEach((child, i) => {
+            (child as HTMLElement).style.transitionDelay = `${i * 120}ms`;
+          });
+          el.classList.add('revealed');
+          staggerObserver.unobserve(el);
+        }
+      });
+    }, { threshold: 0.2 });
+
+    document.querySelectorAll('.reveal-stagger').forEach((el) => staggerObserver.observe(el));
+
+    // === ACCENT LINE DRAW-IN ===
+    const lineObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          (entry.target as HTMLElement).classList.add('drawn');
+          lineObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.5 });
+
+    document.querySelectorAll('.accent-line').forEach((el) => lineObserver.observe(el));
+
+    // === COUNTER ANIMATION ===
+    const counterObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          const el = entry.target as HTMLElement;
+          const target = parseFloat(el.dataset.target || '0');
+          const suffix = el.dataset.suffix || '';
+          const decimals = parseInt(el.dataset.decimals || '0');
+          const duration = 1200;
+          const start = performance.now();
+
+          function updateCounter(now: number) {
+            const elapsed = now - start;
+            const progress = Math.min(elapsed / duration, 1);
+            // Ease out cubic
+            const eased = 1 - Math.pow(1 - progress, 3);
+            const current = target * eased;
+            el.textContent = (decimals > 0 ? current.toFixed(decimals) : Math.round(current).toString()) + suffix;
+            if (progress < 1) requestAnimationFrame(updateCounter);
+          }
+          requestAnimationFrame(updateCounter);
+          counterObserver.unobserve(el);
+        }
+      });
+    }, { threshold: 0.5 });
+
+    document.querySelectorAll('.counter-value').forEach((el) => counterObserver.observe(el));
+
+    // === PARALLAX on sections ===
+    const parallaxSections = document.querySelectorAll('section[id]') as NodeListOf<HTMLElement>;
+    window.addEventListener('scroll', () => {
+      parallaxSections.forEach((section) => {
+        const rect = section.getBoundingClientRect();
+        const speed = 0.03;
+        const offset = rect.top * speed;
+        const inner = section.querySelector('.max-w-6xl, .max-w-7xl') as HTMLElement;
+        if (inner) inner.style.transform = `translateY(${offset}px)`;
+      });
     });
   </script>
 
@@ -1057,6 +1440,7 @@ import '../styles/global.css';
       });
     }
 
+    let tvcPivot: THREE.Group | null = null;
     const tvcLoader = new GLTFLoader();
     tvcLoader.load('/models/tvc-mount.gltf', (gltf) => {
       const model = gltf.scene;
@@ -1078,18 +1462,17 @@ import '../styles/global.css';
       const center = box.getCenter(new THREE.Vector3());
       model.position.set(-center.x, -center.y, -center.z);
 
-      const pivot = new THREE.Group();
-      pivot.add(model);
+      tvcPivot = new THREE.Group();
+      tvcPivot.add(model);
       const size = box.getSize(new THREE.Vector3());
-      // Rotate if needed so it stands upright
       if (size.x > size.y && size.x > size.z) {
-        pivot.rotation.z = Math.PI / 2;
+        tvcPivot.rotation.z = Math.PI / 2;
       } else if (size.z > size.y && size.z > size.x) {
-        pivot.rotation.x = -Math.PI / 2;
+        tvcPivot.rotation.x = -Math.PI / 2;
       }
-      tvcScene.add(pivot);
+      tvcScene.add(tvcPivot);
 
-      const finalBox = new THREE.Box3().setFromObject(pivot);
+      const finalBox = new THREE.Box3().setFromObject(tvcPivot);
       const finalCenter = finalBox.getCenter(new THREE.Vector3());
       const finalSize = finalBox.getSize(new THREE.Vector3());
       tvcControls.target.copy(finalCenter);
@@ -1164,8 +1547,13 @@ import '../styles/global.css';
     });
 
     // Animation loop
+    const tvcWorldY = new THREE.Vector3(0, 1, 0);
     function tvcAnimate() {
       requestAnimationFrame(tvcAnimate);
+      if (tvcPivot) {
+        const delta = (window as any).__scrollDelta?.() || 0;
+        tvcPivot.rotateOnWorldAxis(tvcWorldY, delta * 0.002);
+      }
       tvcControls.update();
       tvcRenderer.render(tvcScene, tvcCamera);
     }
@@ -1198,23 +1586,88 @@ import '../styles/global.css';
     const pcbRenderer = new THREE.WebGLRenderer({ canvas: pcbCanvas, antialias: true, alpha: true });
     pcbRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     pcbRenderer.setSize(pcbContainer.clientWidth, pcbContainer.clientHeight);
+    // PBR tone mapping for realistic light response
+    pcbRenderer.toneMapping = THREE.LinearToneMapping;
+    pcbRenderer.toneMappingExposure = 1.0;
+    pcbRenderer.shadowMap.enabled = true;
+    pcbRenderer.shadowMap.type = THREE.VSMShadowMap;
 
     const pcbControls = new OrbitControls(pcbCamera, pcbCanvas);
     pcbControls.enableDamping = true;
-    pcbControls.dampingFactor = 0.05;
+    pcbControls.dampingFactor = 0.08;
     pcbControls.enablePan = false;
+    pcbControls.autoRotate = false;
+    pcbControls.minDistance = 0.01;
+    pcbControls.maxDistance = 50;
 
-    // Lighting
-    pcbScene.add(new THREE.AmbientLight(0xffffff, 0.8));
-    const pcbDirLight = new THREE.DirectionalLight(0xffffff, 1.0);
-    pcbDirLight.position.set(3, 5, 3);
-    pcbScene.add(pcbDirLight);
-    const pcbDirLight2 = new THREE.DirectionalLight(0xffffff, 0.3);
-    pcbDirLight2.position.set(-2, 2, -2);
-    pcbScene.add(pcbDirLight2);
+    // --- Environment map for realistic reflections ---
+    const pcbPmrem = new THREE.PMREMGenerator(pcbRenderer);
+    pcbPmrem.compileEquirectangularShader();
+    // Procedural studio environment — soft gradient hemisphere
+    const envScene = new THREE.Scene();
+    const envGeo = new THREE.SphereGeometry(10, 32, 16);
+    const envMat = new THREE.ShaderMaterial({
+      side: THREE.BackSide,
+      uniforms: {},
+      vertexShader: `
+        varying vec3 vWorldPos;
+        void main() {
+          vWorldPos = (modelMatrix * vec4(position, 1.0)).xyz;
+          gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+        }
+      `,
+      fragmentShader: `
+        varying vec3 vWorldPos;
+        void main() {
+          float y = normalize(vWorldPos).y;
+          // Warm top, cool bottom, dark middle — studio HDRI feel
+          vec3 top = vec3(0.95, 0.92, 0.88);
+          vec3 mid = vec3(0.12, 0.12, 0.14);
+          vec3 bot = vec3(0.06, 0.07, 0.10);
+          vec3 col = y > 0.0 ? mix(mid, top, pow(y, 0.4)) : mix(mid, bot, pow(-y, 0.6));
+          // Subtle warm accent from the side
+          float side = abs(normalize(vWorldPos).x);
+          col += vec3(0.15, 0.06, 0.02) * pow(side, 3.0) * (1.0 - abs(y));
+          gl_FragColor = vec4(col, 1.0);
+        }
+      `
+    });
+    envScene.add(new THREE.Mesh(envGeo, envMat));
+    const envRT = pcbPmrem.fromScene(envScene, 0.04);
+    pcbScene.environment = envRT.texture;
 
-    // Highlight material
-    const pcbHighlightMat = new THREE.MeshPhongMaterial({ color: 0xff4444, shininess: 80, emissive: 0x331111, specular: 0x666666 });
+    // --- Lighting: key + fill + rim ---
+    pcbScene.add(new THREE.AmbientLight(0xffffff, 0.3));
+    // Key light — warm, strong, with shadows
+    const pcbKeyLight = new THREE.DirectionalLight(0xffffff, 1.2);
+    pcbKeyLight.position.set(3, 6, 4);
+    pcbKeyLight.castShadow = true;
+    pcbKeyLight.shadow.mapSize.set(1024, 1024);
+    pcbKeyLight.shadow.camera.near = 0.1;
+    pcbKeyLight.shadow.camera.far = 30;
+    pcbKeyLight.shadow.bias = -0.002;
+    pcbKeyLight.shadow.radius = 4;
+    pcbScene.add(pcbKeyLight);
+    // Fill light — cool, softer, opposite side
+    const pcbFillLight = new THREE.DirectionalLight(0xe0e8ff, 0.6);
+    pcbFillLight.position.set(-3, 3, -2);
+    pcbScene.add(pcbFillLight);
+    // Rim light — edge definition from behind
+    const pcbRimLight = new THREE.DirectionalLight(0xffffff, 0.4);
+    pcbRimLight.position.set(0, 2, -5);
+    pcbScene.add(pcbRimLight);
+    // Subtle bottom bounce
+    const pcbBounceLight = new THREE.HemisphereLight(0x222233, 0x111111, 0.3);
+    pcbScene.add(pcbBounceLight);
+
+    // PBR highlight material
+    const pcbHighlightMat = new THREE.MeshStandardMaterial({
+      color: 0xff3333,
+      roughness: 0.35,
+      metalness: 0.1,
+      emissive: 0x441111,
+      emissiveIntensity: 0.5
+    });
 
     // Component name formatting
     function formatComponentName(refDes: string): string {
@@ -1236,14 +1689,62 @@ import '../styles/global.css';
     const pcbRaycaster = new THREE.Raycaster();
     const pcbMouse = new THREE.Vector2();
 
+    let pcbPivot: THREE.Group | null = null;
     const pcbLoader = new GLTFLoader();
     pcbLoader.load('/models/orbiton.glb', (gltf) => {
       const model = gltf.scene;
 
+      // Enhance all materials for PBR and enable shadows
+      model.traverse((node: any) => {
+        if (node.isMesh) {
+          node.castShadow = true;
+          node.receiveShadow = true;
+          // Upgrade materials: ensure PBR properties
+          const mats = Array.isArray(node.material) ? node.material : [node.material];
+          mats.forEach((mat: any) => {
+            if (mat.isMeshStandardMaterial || mat.isMeshPhysicalMaterial) {
+              // Refine existing PBR mats
+              mat.envMapIntensity = 0.4;
+              mat.needsUpdate = true;
+            } else if (mat.isMeshPhongMaterial || mat.isMeshLambertMaterial) {
+              // Convert legacy materials to Standard
+              const std = new THREE.MeshStandardMaterial({
+                color: mat.color || 0x888888,
+                roughness: 0.5,
+                metalness: mat.shininess ? Math.min(mat.shininess / 200, 0.8) : 0.1,
+                map: mat.map || null,
+                normalMap: mat.normalMap || null,
+                envMapIntensity: 0.4,
+              });
+              node.material = std;
+            }
+          });
+        }
+      });
+
+      // Force PCB board surfaces to correct green
+      const pcbGreen = new THREE.Color(0x008C4A);
+      model.traverse((node: any) => {
+        if (node.isMesh) {
+          const mats = Array.isArray(node.material) ? node.material : [node.material];
+          mats.forEach((mat: any) => {
+            if (mat.color) {
+              const hsl = { h: 0, s: 0, l: 0 };
+              mat.color.getHSL(hsl);
+              // Detect greenish colors (hue 0.2-0.5, some saturation)
+              if (hsl.h > 0.2 && hsl.h < 0.5 && hsl.s > 0.1) {
+                mat.color.copy(pcbGreen);
+                mat.needsUpdate = true;
+              }
+            }
+          });
+        }
+      });
+
       // Each direct child of root is a component — tag all its descendant meshes
       model.children.forEach(child => {
         const name = child.name;
-        if (!name || name.startsWith('=>')) return; // skip board geometry nodes
+        if (!name || name.startsWith('=>')) return;
 
         const displayName = formatComponentName(name);
         child.traverse(descendant => {
@@ -1264,16 +1765,16 @@ import '../styles/global.css';
       const center = box.getCenter(new THREE.Vector3());
       model.position.set(-center.x, -center.y, -center.z);
 
-      const pivot = new THREE.Group();
-      pivot.add(model);
-      pcbScene.add(pivot);
+      pcbPivot = new THREE.Group();
+      pcbPivot.add(model);
+      pcbScene.add(pcbPivot);
 
-      const finalBox = new THREE.Box3().setFromObject(pivot);
+      const finalBox = new THREE.Box3().setFromObject(pcbPivot);
       const finalCenter = finalBox.getCenter(new THREE.Vector3());
       const finalSize = finalBox.getSize(new THREE.Vector3());
       pcbControls.target.copy(finalCenter);
-      const dist = Math.max(finalSize.x, finalSize.y, finalSize.z) * 2.2;
-      pcbCamera.position.set(finalCenter.x + dist * 0.4, finalCenter.y + dist * 0.6, finalCenter.z + dist * 0.5);
+      const dist = Math.max(finalSize.x, finalSize.y, finalSize.z) * 1.6;
+      pcbCamera.position.set(finalCenter.x + dist * 0.3, finalCenter.y + dist * 0.5, finalCenter.z + dist * 0.4);
       pcbControls.update();
 
       pcbLoading.style.opacity = '0';
@@ -1347,8 +1848,13 @@ import '../styles/global.css';
     });
 
     // Animation loop
+    const pcbWorldY = new THREE.Vector3(0, 1, 0);
     function pcbAnimate() {
       requestAnimationFrame(pcbAnimate);
+      if (pcbPivot) {
+        const delta = (window as any).__scrollDelta?.() || 0;
+        pcbPivot.rotateOnWorldAxis(pcbWorldY, delta * 0.002);
+      }
       pcbControls.update();
       pcbRenderer.render(pcbScene, pcbCamera);
     }
