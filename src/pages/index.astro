@@ -8,7 +8,7 @@ import '../styles/global.css';
   <nav id="navbar" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300">
     <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
       <a href="#hero" class="hover:opacity-80 transition-opacity">
-        <img src="/images/logo.png" alt="TTB Aerospace" class="h-8 w-auto invert brightness-200" />
+        <img src="/images/logo-new.png" alt="TTB Aerospace" class="h-8 w-auto" />
       </a>
       <div class="hidden md:flex items-center gap-8">
         <a href="#vehicle" class="text-sm text-[var(--color-text-secondary)] hover:text-white transition-colors uppercase tracking-widest">Vehicle</a>
@@ -86,22 +86,22 @@ import '../styles/global.css';
           <!-- Stats -->
           <div class="grid grid-cols-3 gap-4 mb-6">
             <div class="bg-[var(--color-surface)] border border-[var(--color-surface-border)] rounded-lg p-4 text-center">
-              <p class="text-2xl font-bold text-white" style="font-family: var(--font-heading)">650g</p>
+              <p class="text-base md:text-2xl font-bold text-white" style="font-family: var(--font-heading)">650g</p>
               <p class="text-xs text-[var(--color-text-secondary)] mt-1" style="font-family: var(--font-mono)">Dry Mass</p>
             </div>
             <div class="bg-[var(--color-surface)] border border-[var(--color-surface-border)] rounded-lg p-4 text-center">
-              <p class="text-2xl font-bold text-white" style="font-family: var(--font-heading)">0.056</p>
+              <p class="text-base md:text-2xl font-bold text-white" style="font-family: var(--font-heading)">0.056</p>
               <p class="text-xs text-[var(--color-text-secondary)] mt-1" style="font-family: var(--font-mono)">MMOI kg/m²</p>
             </div>
             <div class="bg-[var(--color-surface)] border border-[var(--color-surface-border)] rounded-lg p-4 text-center">
-              <p class="text-2xl font-bold text-white" style="font-family: var(--font-heading)">80cm</p>
+              <p class="text-base md:text-2xl font-bold text-white" style="font-family: var(--font-heading)">80cm</p>
               <p class="text-xs text-[var(--color-text-secondary)] mt-1" style="font-family: var(--font-mono)">Length</p>
             </div>
           </div>
 
           <!-- Flight Log -->
           <h4 class="text-lg font-semibold mb-3" style="font-family: var(--font-heading)">Flight Log</h4>
-          <table class="w-full text-left" style="font-family: var(--font-mono)">
+          <table class="w-full text-left">
             <thead>
               <tr class="border-b border-[var(--color-surface-border)]">
                 <th class="py-1.5 pr-3 text-xs text-[var(--color-text-secondary)] uppercase tracking-wider">Flight</th>
@@ -162,20 +162,20 @@ import '../styles/global.css';
             </p>
             <div class="grid grid-cols-3 gap-4 mb-6">
               <div class="bg-[var(--color-surface)] border border-[var(--color-surface-border)] rounded-lg p-4 text-center">
-                <p class="text-2xl font-bold text-white" style="font-family: var(--font-heading)">615g</p>
+                <p class="text-base md:text-2xl font-bold text-white" style="font-family: var(--font-heading)">615g</p>
                 <p class="text-xs text-[var(--color-text-secondary)] mt-1" style="font-family: var(--font-mono)">Dry Mass</p>
               </div>
               <div class="bg-[var(--color-surface)] border border-[var(--color-surface-border)] rounded-lg p-4 text-center">
-                <p class="text-2xl font-bold text-white" style="font-family: var(--font-heading)">0.060</p>
+                <p class="text-base md:text-2xl font-bold text-white" style="font-family: var(--font-heading)">0.060</p>
                 <p class="text-xs text-[var(--color-text-secondary)] mt-1" style="font-family: var(--font-mono)">MMOI kg/m²</p>
               </div>
               <div class="bg-[var(--color-surface)] border border-[var(--color-surface-border)] rounded-lg p-4 text-center">
-                <p class="text-2xl font-bold text-white" style="font-family: var(--font-heading)">75cm</p>
+                <p class="text-base md:text-2xl font-bold text-white" style="font-family: var(--font-heading)">75cm</p>
                 <p class="text-xs text-[var(--color-text-secondary)] mt-1" style="font-family: var(--font-mono)">Length</p>
               </div>
             </div>
             <h4 class="text-lg font-semibold mb-3" style="font-family: var(--font-heading)">Flight Log</h4>
-            <table class="w-full text-left" style="font-family: var(--font-mono)">
+            <table class="w-full text-left">
               <thead>
                 <tr class="border-b border-[var(--color-surface-border)]">
                   <th class="py-1.5 pr-3 text-xs text-[var(--color-text-secondary)] uppercase tracking-wider">Flight</th>
@@ -234,7 +234,7 @@ import '../styles/global.css';
                 <h3 class="text-xl font-semibold" style="font-family: var(--font-heading)">Aurora Orbiton Edition</h3>
                 <p class="text-[var(--color-accent)] text-sm mt-1" style="font-family: var(--font-mono)">2025 — Latest Generation</p>
               </div>
-              <span class="px-3 py-1 bg-[var(--color-accent)]/20 border border-[var(--color-accent)]/30 rounded-full text-xs text-[var(--color-accent-bright)]" style="font-family: var(--font-mono)">ACTIVE</span>
+              <span class="px-3 py-1 bg-green-500/20 border border-green-500/30 rounded-full text-xs text-green-400" style="font-family: var(--font-mono)">ACTIVE</span>
             </div>
             <div>
               <h4 class="text-sm text-[var(--color-text-secondary)] uppercase tracking-wider mb-3" style="font-family: var(--font-mono)">Specifications</h4>
@@ -265,9 +265,12 @@ import '../styles/global.css';
 
           <!-- Aurora PV1 -->
           <div class="avionics-panel bg-[var(--color-surface)] border border-[var(--color-surface-border)] rounded-xl p-6 hidden" id="panel-pv1">
-            <div class="mb-5">
-              <h3 class="text-xl font-semibold" style="font-family: var(--font-heading)">Aurora PV1</h3>
-              <p class="text-[var(--color-accent)] text-sm mt-1" style="font-family: var(--font-mono)">2021</p>
+            <div class="flex items-center justify-between mb-5 flex-wrap gap-3">
+              <div>
+                <h3 class="text-xl font-semibold" style="font-family: var(--font-heading)">Aurora PV1</h3>
+                <p class="text-[var(--color-accent)] text-sm mt-1" style="font-family: var(--font-mono)">2021</p>
+              </div>
+              <span class="px-3 py-1 bg-red-500/20 border border-red-500/30 rounded-full text-xs text-red-400" style="font-family: var(--font-mono)">INACTIVE</span>
             </div>
             <div class="grid md:grid-cols-2 gap-6">
               <div>
@@ -288,9 +291,12 @@ import '../styles/global.css';
 
           <!-- Aurora DV5 -->
           <div class="avionics-panel bg-[var(--color-surface)] border border-[var(--color-surface-border)] rounded-xl p-6 hidden" id="panel-dv5">
-            <div class="mb-5">
-              <h3 class="text-xl font-semibold" style="font-family: var(--font-heading)">Aurora DV5</h3>
-              <p class="text-[var(--color-accent)] text-sm mt-1" style="font-family: var(--font-mono)">2021</p>
+            <div class="flex items-center justify-between mb-5 flex-wrap gap-3">
+              <div>
+                <h3 class="text-xl font-semibold" style="font-family: var(--font-heading)">Aurora DV5</h3>
+                <p class="text-[var(--color-accent)] text-sm mt-1" style="font-family: var(--font-mono)">2021</p>
+              </div>
+              <span class="px-3 py-1 bg-red-500/20 border border-red-500/30 rounded-full text-xs text-red-400" style="font-family: var(--font-mono)">INACTIVE</span>
             </div>
             <div class="grid md:grid-cols-2 gap-6">
               <div>
