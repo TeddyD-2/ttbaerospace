@@ -158,7 +158,7 @@ import '../styles/global.css';
 
       <!-- Alto B Rocket (below) -->
       <div class="mt-16 reveal">
-        <div class="grid md:grid-cols-2 gap-8 items-start">
+        <div class="grid md:grid-cols-2 gap-8 items-center">
           <div>
             <h3 class="text-2xl font-semibold mb-2" style="font-family: var(--font-heading)">Alto B Rocket</h3>
             <p class="text-[var(--color-accent)] text-sm mb-6" style="font-family: var(--font-mono)">High-Performance Vehicle</p>
@@ -207,7 +207,7 @@ import '../styles/global.css';
   </section>
 
   <!-- Avionics Section -->
-  <section id="avionics" class="py-16 px-6 bg-[#1a1a1a]/90">
+  <section id="avionics" class="py-16 px-6 bg-[#1a1a1a]">
     <div class="max-w-6xl mx-auto">
       <div class="mb-10 reveal">
         <p class="text-[var(--color-accent)] text-sm uppercase tracking-widest mb-3" style="font-family: var(--font-mono)">02 // Avionics</p>
@@ -218,15 +218,15 @@ import '../styles/global.css';
       <div class="reveal grid md:grid-cols-[280px_1fr] gap-6">
         <!-- Left: Avionics selector stack -->
         <div class="flex flex-col gap-3">
-          <button class="avionics-tab text-left p-4 rounded-lg border transition-all duration-200 bg-[var(--color-accent)]/10 border-[var(--color-accent)]/40" data-avionics="orbiton">
+          <button class="avionics-tab text-left p-4 rounded-lg border transition-all duration-200 hover:border-[var(--color-accent)]/30 bg-[var(--color-accent)]/10 border-[var(--color-accent)]/40" data-avionics="orbiton">
             <h3 class="text-base font-semibold text-white" style="font-family: var(--font-heading)">Aurora Orbiton</h3>
             <p class="text-xs text-[var(--color-accent)]" style="font-family: var(--font-mono)">2025 — Latest</p>
           </button>
-          <button class="avionics-tab text-left p-4 rounded-lg border transition-all duration-200 bg-[var(--color-surface)] border-[var(--color-surface-border)] hover:border-[var(--color-accent)]/30" data-avionics="pv1">
+          <button class="avionics-tab text-left p-4 rounded-lg border transition-all duration-200 hover:border-[var(--color-accent)]/30 bg-[var(--color-surface)] border-[var(--color-surface-border)]" data-avionics="pv1">
             <h3 class="text-base font-semibold text-white" style="font-family: var(--font-heading)">Aurora PV1</h3>
             <p class="text-xs text-[var(--color-text-secondary)]" style="font-family: var(--font-mono)">2021</p>
           </button>
-          <button class="avionics-tab text-left p-4 rounded-lg border transition-all duration-200 bg-[var(--color-surface)] border-[var(--color-surface-border)] hover:border-[var(--color-accent)]/30" data-avionics="dv5">
+          <button class="avionics-tab text-left p-4 rounded-lg border transition-all duration-200 hover:border-[var(--color-accent)]/30 bg-[var(--color-surface)] border-[var(--color-surface-border)]" data-avionics="dv5">
             <h3 class="text-base font-semibold text-white" style="font-family: var(--font-heading)">Aurora DV5</h3>
             <p class="text-xs text-[var(--color-text-secondary)]" style="font-family: var(--font-mono)">2021</p>
           </button>
@@ -342,27 +342,27 @@ import '../styles/global.css';
             Characterized for all stages of flight using MATLAB and Simulink. Uses the fastest hobby servos money can buy.
           </p>
           <div class="grid grid-cols-2 gap-4 mb-8" style="font-family: var(--font-mono)">
-            <div class="bg-[var(--color-surface)] border border-[var(--color-surface-border)] rounded-lg p-4">
+            <div class="bg-[#151515] border border-[var(--color-surface-border)] rounded-lg p-4">
               <p class="text-xs text-[var(--color-text-secondary)] mb-1">Actuation Range</p>
               <p class="text-white font-medium">±5 degrees</p>
             </div>
-            <div class="bg-[var(--color-surface)] border border-[var(--color-surface-border)] rounded-lg p-4">
+            <div class="bg-[#151515] border border-[var(--color-surface-border)] rounded-lg p-4">
               <p class="text-xs text-[var(--color-text-secondary)] mb-1">Motor Size</p>
               <p class="text-white font-medium">&lt;24mm</p>
             </div>
-            <div class="bg-[var(--color-surface)] border border-[var(--color-surface-border)] rounded-lg p-4">
+            <div class="bg-[#151515] border border-[var(--color-surface-border)] rounded-lg p-4">
               <p class="text-xs text-[var(--color-text-secondary)] mb-1">Airframe Size</p>
               <p class="text-white font-medium">&gt;66mm</p>
             </div>
-            <div class="bg-[var(--color-surface)] border border-[var(--color-surface-border)] rounded-lg p-4">
+            <div class="bg-[#151515] border border-[var(--color-surface-border)] rounded-lg p-4">
               <p class="text-xs text-[var(--color-text-secondary)] mb-1">Actuation Speed</p>
               <p class="text-white font-medium">0.05s / 5°</p>
             </div>
-            <div class="bg-[var(--color-surface)] border border-[var(--color-surface-border)] rounded-lg p-4">
+            <div class="bg-[#151515] border border-[var(--color-surface-border)] rounded-lg p-4">
               <p class="text-xs text-[var(--color-text-secondary)] mb-1">Servos</p>
               <p class="text-white font-medium">MKS HV393i</p>
             </div>
-            <div class="bg-[var(--color-surface)] border border-[var(--color-surface-border)] rounded-lg p-4">
+            <div class="bg-[#151515] border border-[var(--color-surface-border)] rounded-lg p-4">
               <p class="text-xs text-[var(--color-text-secondary)] mb-1">Fabrication</p>
               <p class="text-white font-medium">3D Printable</p>
             </div>
@@ -392,7 +392,7 @@ import '../styles/global.css';
   </section>
 
   <!-- Featured Section — Carousel -->
-  <section id="featured" class="py-16 px-6 bg-[#1a1a1a]/90">
+  <section id="featured" class="py-16 px-6 bg-[#1a1a1a]">
     <div class="max-w-5xl mx-auto">
       <div class="mb-10 reveal text-center">
         <p class="text-[var(--color-accent)] text-sm uppercase tracking-widest mb-3" style="font-family: var(--font-mono)">04 // Featured</p>
@@ -552,7 +552,7 @@ import '../styles/global.css';
       container.appendChild(canvas);
       var ctx = canvas.getContext('2d');
 
-      var NUM_STARS = 32;
+      var NUM_STARS = 16;
       var GRAVITY_RADIUS = 90;
       var GRAVITY_STRENGTH = 2.0;
       var EVENT_HORIZON = 5;
