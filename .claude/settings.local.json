@@ -1,0 +1,30 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm create:*)",
+      "Bash(where.exe npm:*)",
+      "Bash(where.exe node:*)",
+      "Read(//c/Program Files/nodejs//**)",
+      "Read(//c/Users/teddy/Documents/vscode_projects/ttbaerospace/$APPDATA/**)",
+      "Read(//c/Users/teddy/Documents/vscode_projects/ttbaerospace/$LOCALAPPDATA/Programs/**)",
+      "Read(//c/Program Files/**)",
+      "Read(//c/Users/teddy/Documents/vscode_projects/ttbaerospace/$HOME/**)",
+      "Bash(export PATH=\"/c/Program Files/nodejs:$PATH\")",
+      "Bash(npm --version)",
+      "Read(//c/Users/teddy/Documents/vscode_projects/**)",
+      "Bash(rm -rf ttbaerospace_tmp)",
+      "Bash(cp -r ttbaerospace_tmp/* ttbaerospace/)",
+      "Bash(cp ttbaerospace_tmp/.* ttbaerospace/)",
+      "Bash(npm install:*)",
+      "Bash(cp \"C:/Users/teddy/Downloads/rocket_merged.glb\" \"C:/Users/teddy/Documents/vscode_projects/ttbaerospace/public/models/\")",
+      "Bash(cp \"C:/Users/teddy/Downloads/rocket_proto.glb\" \"C:/Users/teddy/Documents/vscode_projects/ttbaerospace/public/models/\")",
+      "Bash(npm run:*)",
+      "mcp__Claude_Preview__preview_start",
+      "Bash(node -e \":*)",
+      "Bash(npm list:*)",
+      "Bash(git init:*)",
+      "Bash(git branch:*)",
+      "Bash(git add:*)"
+    ]
+  }
+}
