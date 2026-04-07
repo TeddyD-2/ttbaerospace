@@ -967,13 +967,12 @@ import '../styles/global.css';
       }
     });
 
-    // Animation loop (with scroll-based auto-rotate around vertical axis)
+    // Animation loop (slow continuous auto-rotate)
     const worldY = new THREE.Vector3(0, 1, 0);
     function animate() {
       requestAnimationFrame(animate);
       if (rocketPivot) {
-        const delta = (window as any).__scrollDelta?.() || 0;
-        rocketPivot.rotateOnWorldAxis(worldY, delta * 0.0008);;
+        rocketPivot.rotateOnWorldAxis(worldY, 0.003);
       }
       controls.update();
       renderer.render(scene, camera);
@@ -1015,14 +1014,7 @@ import '../styles/global.css';
     navbar.style.backgroundColor = 'rgba(30, 30, 30, 0.5)';
     navbar.style.backdropFilter = 'blur(4px)';
 
-    // === 3D AUTO-ROTATE ON SCROLL ===
-    let lastScrollY = window.scrollY;
-    let scrollDelta = 0;
-
     window.addEventListener('scroll', () => {
-      // Scroll progress
-      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-
       // Navbar background
       const scrollFraction = Math.min(window.scrollY / 400, 1);
       const opacity = 0.5 + scrollFraction * 0.5;
@@ -1049,18 +1041,7 @@ import '../styles/global.css';
           link.classList.remove('active');
         }
       });
-
-      // Scroll delta for 3D auto-rotate
-      scrollDelta = window.scrollY - lastScrollY;
-      lastScrollY = window.scrollY;
     });
-
-    // Expose scrollDelta for 3D viewers
-    (window as any).__scrollDelta = () => {
-      const d = scrollDelta;
-      scrollDelta *= 0.9; // decay
-      return d;
-    };
 
     // === MOBILE MENU ===
     document.getElementById('mobile-menu-btn')!.addEventListener('click', () => {
@@ -1199,17 +1180,6 @@ import '../styles/global.css';
 
     document.querySelectorAll('.counter-value').forEach((el) => counterObserver.observe(el));
 
-    // === PARALLAX on sections ===
-    const parallaxSections = document.querySelectorAll('section[id]') as NodeListOf<HTMLElement>;
-    window.addEventListener('scroll', () => {
-      parallaxSections.forEach((section) => {
-        const rect = section.getBoundingClientRect();
-        const speed = 0.03;
-        const offset = rect.top * speed;
-        const inner = section.querySelector('.max-w-6xl, .max-w-7xl') as HTMLElement;
-        if (inner) inner.style.transform = `translateY(${offset}px)`;
-      });
-    });
   </script>
 
   <!-- TVC Mount 3D Viewer Script -->
@@ -1401,13 +1371,12 @@ import '../styles/global.css';
       tvcCanvas.style.cursor = 'grab';
     });
 
-    // Animation loop
+    // Animation loop (slow continuous auto-rotate)
     const tvcWorldY = new THREE.Vector3(0, 1, 0);
     function tvcAnimate() {
       requestAnimationFrame(tvcAnimate);
       if (tvcPivot) {
-        const delta = (window as any).__scrollDelta?.() || 0;
-        tvcPivot.rotateOnWorldAxis(tvcWorldY, delta * 0.002);
+        tvcPivot.rotateOnWorldAxis(tvcWorldY, 0.003);
       }
       tvcControls.update();
       tvcRenderer.render(tvcScene, tvcCamera);
@@ -1702,13 +1671,12 @@ import '../styles/global.css';
       pcbCanvas.style.cursor = 'grab';
     });
 
-    // Animation loop
+    // Animation loop (slow continuous auto-rotate)
     const pcbWorldY = new THREE.Vector3(0, 1, 0);
     function pcbAnimate() {
       requestAnimationFrame(pcbAnimate);
       if (pcbPivot) {
-        const delta = (window as any).__scrollDelta?.() || 0;
-        pcbPivot.rotateOnWorldAxis(pcbWorldY, delta * 0.002);
+        pcbPivot.rotateOnWorldAxis(pcbWorldY, 0.003);
       }
       pcbControls.update();
       pcbRenderer.render(pcbScene, pcbCamera);
