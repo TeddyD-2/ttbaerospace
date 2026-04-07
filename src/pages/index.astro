@@ -547,7 +547,7 @@ import '../styles/global.css';
       container.appendChild(canvas);
       var ctx = canvas.getContext('2d');
 
-      var NUM_STARS = 32;
+      var NUM_STARS = 48;
       var canvasW, canvasH, dpr;
 
       function resize() {
@@ -561,21 +561,18 @@ import '../styles/global.css';
       resize();
       window.addEventListener('resize', resize);
 
-      // Each star orbits its own center in a smooth elliptical path
-      // Wider speed range: some crawl, some zip
+      // Stars drift linearly with slight gentle drift changes
       var stars = [];
       for (var i = 0; i < NUM_STARS; i++) {
-        // Random speed with wide variance — some slow, some fast
-        var spd = Math.random() * Math.random() * 0.012 + 0.0003; // exponential distribution
-        if (Math.random() < 0.5) spd = -spd;
+        // Random speed — exponential distribution: most slow, a few fast
+        var speed = Math.random() * Math.random() * 1.5 + 0.05;
+        var dir = Math.random() * Math.PI * 2;
         stars.push({
-          cx: Math.random() * canvasW,
-          cy: Math.random() * canvasH,
-          rx: (Math.random() * 0.3 + 0.05) * Math.min(canvasW, canvasH) * 0.3,
-          ry: (Math.random() * 0.3 + 0.05) * Math.min(canvasW, canvasH) * 0.3,
-          angle: Math.random() * Math.PI * 2,
-          speed: spd,
-          tilt: Math.random() * Math.PI,
+          x: Math.random() * canvasW,
+          y: Math.random() * canvasH,
+          vx: Math.cos(dir) * speed,
+          vy: Math.sin(dir) * speed,
+          drift: (Math.random() - 0.5) * 0.002, // very slight turn rate
           size: Math.random() * 1.2 + 0.3,
           opacity: Math.random() * 0.4 + 0.6,
           prevX: 0,
@@ -587,31 +584,31 @@ import '../styles/global.css';
         ctx.clearRect(0, 0, canvasW, canvasH);
         for (var i = 0; i < stars.length; i++) {
           var s = stars[i];
-          // Store previous position for trail
-          var oldAngle = s.angle;
-          s.angle += s.speed;
-          // Elliptical orbit with tilt
-          var ex = Math.cos(s.angle) * s.rx;
-          var ey = Math.sin(s.angle) * s.ry;
-          var x = s.cx + ex * Math.cos(s.tilt) - ey * Math.sin(s.tilt);
-          var y = s.cy + ex * Math.sin(s.tilt) + ey * Math.cos(s.tilt);
-          x = ((x % canvasW) + canvasW) % canvasW;
-          y = ((y % canvasH) + canvasH) % canvasH;
+          // Gentle drift: slowly rotate velocity direction
+          var cosD = Math.cos(s.drift);
+          var sinD = Math.sin(s.drift);
+          var nvx = s.vx * cosD - s.vy * sinD;
+          var nvy = s.vx * sinD + s.vy * cosD;
+          s.vx = nvx;
+          s.vy = nvy;
+          // Move
+          s.x += s.vx;
+          s.y += s.vy;
+          // Wrap around screen
+          if (s.x < 0) s.x += canvasW;
+          if (s.x > canvasW) s.x -= canvasW;
+          if (s.y < 0) s.y += canvasH;
+          if (s.y > canvasH) s.y -= canvasH;
+          var x = s.x;
+          var y = s.y;
 
-          // Compute pixel speed for trail length
-          var dx = x - s.prevX;
-          var dy = y - s.prevY;
-          // Ignore first frame and screen-wrap jumps
-          var pxSpeed = (s.prevX === 0 && s.prevY === 0) ? 0 : Math.sqrt(dx * dx + dy * dy);
-          if (pxSpeed > 50) pxSpeed = 0; // screen wrap, ignore
+          // Trail based on velocity
+          var pxSpeed = Math.sqrt(s.vx * s.vx + s.vy * s.vy);
 
-          if (pxSpeed > 0.8) {
-            // Draw trail — length and opacity scale with speed
-            var trailLen = Math.min(pxSpeed * 3, 30);
-            var trailDx = dx / pxSpeed;
-            var trailDy = dy / pxSpeed;
-            var tx = x - trailDx * trailLen;
-            var ty = y - trailDy * trailLen;
+          if (pxSpeed > 0.3) {
+            var trailLen = Math.min(pxSpeed * 6, 60);
+            var tx = x - (s.vx / pxSpeed) * trailLen;
+            var ty = y - (s.vy / pxSpeed) * trailLen;
 
             // Gradient trail: bright at head, fades to nothing
             var grad = ctx.createLinearGradient(tx, ty, x, y);
@@ -632,8 +629,6 @@ import '../styles/global.css';
           ctx.fillStyle = 'rgba(255, 255, 255, ' + s.opacity.toFixed(2) + ')';
           ctx.fill();
 
-          s.prevX = x;
-          s.prevY = y;
         }
         requestAnimationFrame(draw);
       }
