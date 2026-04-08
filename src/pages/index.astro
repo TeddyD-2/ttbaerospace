@@ -37,7 +37,7 @@ import '../styles/global.css';
   </nav>
 
   <!-- Hero Section — Compact on mobile, video background on desktop -->
-  <section id="hero" class="relative h-[40vh] md:h-screen flex flex-col items-center justify-center overflow-hidden">
+  <section id="hero" class="relative pt-28 pb-0 md:pt-0 md:pb-0 md:h-screen flex flex-col items-center justify-center overflow-hidden">
     <!-- Video background (desktop only) -->
     <div class="absolute inset-0 z-0 hidden md:block">
       <div class="absolute inset-0 bg-black/50 z-10"></div>
@@ -401,7 +401,7 @@ import '../styles/global.css';
           <div id="carousel-track" class="flex transition-transform duration-500 ease-in-out">
             <!-- Slide 1: Vertical Landing Video -->
             <div class="w-full flex-shrink-0 px-1">
-              <div class="aspect-video rounded-xl overflow-hidden border border-[var(--color-surface-border)] bg-[var(--color-surface)]">
+              <div class="h-[350px] md:h-[500px] rounded-xl overflow-hidden border border-[var(--color-surface-border)] bg-[var(--color-surface)]">
                 <iframe
                   width="100%" height="100%"
                   src="https://www.youtube.com/embed/1GanrexRyVY"
@@ -415,7 +415,7 @@ import '../styles/global.css';
             </div>
             <!-- Slide 2: New Video -->
             <div class="w-full flex-shrink-0 px-1">
-              <div class="aspect-video rounded-xl overflow-hidden border border-[var(--color-surface-border)] bg-[var(--color-surface)]">
+              <div class="h-[350px] md:h-[500px] rounded-xl overflow-hidden border border-[var(--color-surface-border)] bg-[var(--color-surface)]">
                 <iframe
                   width="100%" height="100%"
                   src="https://www.youtube.com/embed/zt37_NgYXe4"
@@ -433,7 +433,7 @@ import '../styles/global.css';
                 <iframe
                   src="https://hackaday.com/2023/06/21/how-to-land-a-model-rocket-vertically/"
                   title="Hackaday — How to Land a Model Rocket Vertically"
-                  class="w-full h-[600px] border-0"
+                  class="w-full h-[350px] md:h-[500px] border-0"
                   loading="lazy"
                   sandbox="allow-scripts allow-same-origin"
                 ></iframe>
@@ -449,7 +449,7 @@ import '../styles/global.css';
                 <iframe
                   src="https://www.linkedin.com/embed/feed/update/urn:li:activity:7111289276603994112"
                   title="LinkedIn Post"
-                  class="w-full h-[600px] border-0"
+                  class="w-full h-[350px] md:h-[500px] border-0"
                   loading="lazy"
                   sandbox="allow-scripts allow-same-origin allow-popups"
                 ></iframe>
