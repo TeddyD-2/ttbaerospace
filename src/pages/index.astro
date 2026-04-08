@@ -581,6 +581,7 @@ import '../styles/global.css';
       }
 
       function draw() {
+        if (document.hidden) { requestAnimationFrame(draw); return; }
         ctx.clearRect(0, 0, canvasW, canvasH);
         for (var i = 0; i < stars.length; i++) {
           var s = stars[i];
@@ -967,12 +968,15 @@ import '../styles/global.css';
       }
     });
 
-    // Animation loop (slow continuous auto-rotate)
+    // Animation loop (continuous auto-rotate, pauses when off-screen)
     const worldY = new THREE.Vector3(0, 1, 0);
+    let rocketVisible = false;
+    new IntersectionObserver(([e]) => { rocketVisible = e.isIntersecting; }, { threshold: 0 }).observe(container);
     function animate() {
       requestAnimationFrame(animate);
+      if (!rocketVisible) return;
       if (rocketPivot) {
-        rocketPivot.rotateOnWorldAxis(worldY, 0.003);
+        rocketPivot.rotateOnWorldAxis(worldY, 0.008);
       }
       controls.update();
       renderer.render(scene, camera);
@@ -1371,12 +1375,15 @@ import '../styles/global.css';
       tvcCanvas.style.cursor = 'grab';
     });
 
-    // Animation loop (slow continuous auto-rotate)
+    // Animation loop (continuous auto-rotate, pauses when off-screen)
     const tvcWorldY = new THREE.Vector3(0, 1, 0);
+    let tvcVisible = false;
+    new IntersectionObserver(([e]) => { tvcVisible = e.isIntersecting; }, { threshold: 0 }).observe(tvcContainer);
     function tvcAnimate() {
       requestAnimationFrame(tvcAnimate);
+      if (!tvcVisible) return;
       if (tvcPivot) {
-        tvcPivot.rotateOnWorldAxis(tvcWorldY, 0.003);
+        tvcPivot.rotateOnWorldAxis(tvcWorldY, 0.008);
       }
       tvcControls.update();
       tvcRenderer.render(tvcScene, tvcCamera);
@@ -1671,12 +1678,15 @@ import '../styles/global.css';
       pcbCanvas.style.cursor = 'grab';
     });
 
-    // Animation loop (slow continuous auto-rotate)
+    // Animation loop (continuous auto-rotate, pauses when off-screen)
     const pcbWorldY = new THREE.Vector3(0, 1, 0);
+    let pcbVisible = false;
+    new IntersectionObserver(([e]) => { pcbVisible = e.isIntersecting; }, { threshold: 0 }).observe(pcbContainer);
     function pcbAnimate() {
       requestAnimationFrame(pcbAnimate);
+      if (!pcbVisible) return;
       if (pcbPivot) {
-        pcbPivot.rotateOnWorldAxis(pcbWorldY, 0.003);
+        pcbPivot.rotateOnWorldAxis(pcbWorldY, 0.008);
       }
       pcbControls.update();
       pcbRenderer.render(pcbScene, pcbCamera);
