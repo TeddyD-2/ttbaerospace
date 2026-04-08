@@ -36,12 +36,12 @@ import '../styles/global.css';
     </div>
   </nav>
 
-  <!-- Hero Section — Video Background -->
-  <section id="hero" class="relative h-screen flex flex-col items-center justify-center overflow-hidden">
-    <!-- Video background -->
-    <div class="absolute inset-0 z-0">
+  <!-- Hero Section — Compact on mobile, video background on desktop -->
+  <section id="hero" class="relative h-[40vh] md:h-screen flex flex-col items-center justify-center overflow-hidden">
+    <!-- Video background (desktop only) -->
+    <div class="absolute inset-0 z-0 hidden md:block">
       <div class="absolute inset-0 bg-black/50 z-10"></div>
-      <div id="hero-video-wrapper" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300%] h-[300%] md:w-[120%] md:h-[120%] pointer-events-none">
+      <div id="hero-video-wrapper" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] pointer-events-none">
         <div id="hero-yt-player" class="w-full h-full"></div>
       </div>
     </div>
@@ -52,8 +52,8 @@ import '../styles/global.css';
         <span id="typed-text"></span><span class="typed-cursor"></span>
       </p>
     </div>
-    <!-- Scroll indicator -->
-    <div class="absolute bottom-6 z-20 flex flex-col items-center gap-2 animate-bounce">
+    <!-- Scroll indicator (desktop only) -->
+    <div class="absolute bottom-6 z-20 hidden md:flex flex-col items-center gap-2 animate-bounce">
       <span class="text-[var(--color-text-secondary)] text-xs uppercase tracking-widest" style="font-family: var(--font-mono)">Scroll</span>
       <svg class="w-4 h-4 text-[var(--color-text-secondary)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
@@ -503,36 +503,38 @@ import '../styles/global.css';
     </div>
   </footer>
 
-  <!-- YouTube IFrame API for reliable mobile autoplay -->
+  <!-- YouTube IFrame API (desktop only — skipped on mobile for performance) -->
   <script is:inline>
-    var tag = document.createElement('script');
-    tag.src = 'https://www.youtube.com/iframe_api';
-    document.head.appendChild(tag);
-    function onYouTubeIframeAPIReady() {
-      new YT.Player('hero-yt-player', {
-        videoId: '1GanrexRyVY',
-        playerVars: {
-          autoplay: 1,
-          mute: 1,
-          loop: 1,
-          playlist: '1GanrexRyVY',
-          controls: 0,
-          showinfo: 0,
-          rel: 0,
-          modestbranding: 1,
-          playsinline: 1,
-          start: 0,
-          disablekb: 1,
-          fs: 0,
-          iv_load_policy: 3
-        },
-        events: {
-          onReady: function(e) { e.target.mute(); e.target.playVideo(); },
-          onStateChange: function(e) {
-            if (e.data === YT.PlayerState.ENDED) { e.target.seekTo(0); e.target.playVideo(); }
+    if (window.innerWidth >= 768) {
+      var tag = document.createElement('script');
+      tag.src = 'https://www.youtube.com/iframe_api';
+      document.head.appendChild(tag);
+      function onYouTubeIframeAPIReady() {
+        new YT.Player('hero-yt-player', {
+          videoId: '1GanrexRyVY',
+          playerVars: {
+            autoplay: 1,
+            mute: 1,
+            loop: 1,
+            playlist: '1GanrexRyVY',
+            controls: 0,
+            showinfo: 0,
+            rel: 0,
+            modestbranding: 1,
+            playsinline: 1,
+            start: 0,
+            disablekb: 1,
+            fs: 0,
+            iv_load_policy: 3
+          },
+          events: {
+            onReady: function(e) { e.target.mute(); e.target.playVideo(); },
+            onStateChange: function(e) {
+              if (e.data === YT.PlayerState.ENDED) { e.target.seekTo(0); e.target.playVideo(); }
+            }
           }
-        }
-      });
+        });
+      }
     }
   </script>
 
@@ -673,6 +675,8 @@ import '../styles/global.css';
       },
     };
 
+    const isMobile = window.innerWidth < 768;
+
     const canvas = document.getElementById('rocket-canvas') as HTMLCanvasElement;
     const container = document.getElementById('rocket-container')!;
     const loadingOverlay = document.getElementById('loading-overlay')!;
@@ -684,9 +688,9 @@ import '../styles/global.css';
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.01, 100);
 
-    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+    const renderer = new THREE.WebGLRenderer({ canvas, antialias: !isMobile, alpha: true });
     renderer.setSize(container.clientWidth, container.clientHeight);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, isMobile ? 1.5 : 2));
     renderer.setClearColor(0x000000, 0);
 
     const controls = new OrbitControls(camera, canvas);
@@ -767,8 +771,13 @@ import '../styles/global.css';
 
     let rocketPivot: THREE.Group | null = null;
     const loader = new GLTFLoader();
-    loader.load(
-      '/models/rocket.gltf',
+    // Lazy-load: only fetch model when container is near viewport
+    let rocketModelLoaded = false;
+    function loadRocketModel() {
+      if (rocketModelLoaded) return;
+      rocketModelLoaded = true;
+      loader.load(
+        '/models/rocket.gltf',
       (gltf) => {
         const model = gltf.scene;
 
@@ -874,6 +883,12 @@ import '../styles/global.css';
         loadingOverlay.innerHTML = '<p class="text-red-500">Failed to load 3D model</p>';
       }
     );
+    }
+    // Trigger model load when container scrolls near viewport
+    const rocketLoadObserver = new IntersectionObserver(([e]) => {
+      if (e.isIntersecting) { loadRocketModel(); rocketLoadObserver.disconnect(); }
+    }, { rootMargin: '200px' });
+    rocketLoadObserver.observe(container);
 
     // Raycasting hover
     let currentGroup: string | null = null;
@@ -960,6 +975,7 @@ import '../styles/global.css';
 
     // Click to navigate to section
     canvas.addEventListener('click', () => {
+      if (isMobile) return; // Don't navigate on mobile — interferes with touch interaction
       if (currentGroup) {
         const info = componentInfo[currentGroup];
         if (info?.link) {
@@ -1201,6 +1217,8 @@ import '../styles/global.css';
     import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
     import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
+    const tvcIsMobile = window.innerWidth < 768;
+
     const tvcContainer = document.getElementById('tvc-viewer')!;
     const tvcCanvas = document.getElementById('tvc-canvas') as HTMLCanvasElement;
     const tvcLoading = document.getElementById('tvc-loading')!;
@@ -1209,8 +1227,8 @@ import '../styles/global.css';
 
     const tvcScene = new THREE.Scene();
     const tvcCamera = new THREE.PerspectiveCamera(35, 1, 0.01, 10);
-    const tvcRenderer = new THREE.WebGLRenderer({ canvas: tvcCanvas, antialias: true, alpha: true });
-    tvcRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    const tvcRenderer = new THREE.WebGLRenderer({ canvas: tvcCanvas, antialias: !tvcIsMobile, alpha: true });
+    tvcRenderer.setPixelRatio(Math.min(window.devicePixelRatio, tvcIsMobile ? 1.5 : 2));
     tvcRenderer.setSize(tvcContainer.clientWidth, tvcContainer.clientHeight);
 
     const tvcControls = new OrbitControls(tvcCamera, tvcCanvas);
@@ -1280,7 +1298,11 @@ import '../styles/global.css';
 
     let tvcPivot: THREE.Group | null = null;
     const tvcLoader = new GLTFLoader();
-    tvcLoader.load('/models/tvc-mount.gltf', (gltf) => {
+    let tvcModelLoaded = false;
+    function loadTvcModel() {
+      if (tvcModelLoaded) return;
+      tvcModelLoaded = true;
+      tvcLoader.load('/models/tvc-mount.gltf', (gltf) => {
       const model = gltf.scene;
 
       // Top-down classification: walk tree, tag descendants when we hit a named assembly
@@ -1325,6 +1347,11 @@ import '../styles/global.css';
     undefined,
     (error) => { console.error('TVC model load error:', error); }
     );
+    }
+    const tvcLoadObserver = new IntersectionObserver(([e]) => {
+      if (e.isIntersecting) { loadTvcModel(); tvcLoadObserver.disconnect(); }
+    }, { rootMargin: '200px' });
+    tvcLoadObserver.observe(tvcContainer);
 
     // Hover — highlight entire group (all meshes sharing same parent part)
     let tvcCurrentGroup: string | null = null;
@@ -1422,6 +1449,8 @@ import '../styles/global.css';
     import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
     import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
+    const pcbIsMobile = window.innerWidth < 768;
+
     const pcbContainer = document.getElementById('orbiton-viewer')!;
     const pcbCanvas = document.getElementById('orbiton-canvas') as HTMLCanvasElement;
     const pcbLoading = document.getElementById('orbiton-loading')!;
@@ -1430,14 +1459,16 @@ import '../styles/global.css';
 
     const pcbScene = new THREE.Scene();
     const pcbCamera = new THREE.PerspectiveCamera(35, 1, 0.01, 100);
-    const pcbRenderer = new THREE.WebGLRenderer({ canvas: pcbCanvas, antialias: true, alpha: true });
-    pcbRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    const pcbRenderer = new THREE.WebGLRenderer({ canvas: pcbCanvas, antialias: !pcbIsMobile, alpha: true });
+    pcbRenderer.setPixelRatio(Math.min(window.devicePixelRatio, pcbIsMobile ? 1.5 : 2));
     pcbRenderer.setSize(pcbContainer.clientWidth, pcbContainer.clientHeight);
     // PBR tone mapping for realistic light response
     pcbRenderer.toneMapping = THREE.LinearToneMapping;
     pcbRenderer.toneMappingExposure = 1.0;
-    pcbRenderer.shadowMap.enabled = true;
-    pcbRenderer.shadowMap.type = THREE.VSMShadowMap;
+    if (!pcbIsMobile) {
+      pcbRenderer.shadowMap.enabled = true;
+      pcbRenderer.shadowMap.type = THREE.VSMShadowMap;
+    }
 
     const pcbControls = new OrbitControls(pcbCamera, pcbCanvas);
     pcbControls.enableDamping = true;
@@ -1538,7 +1569,11 @@ import '../styles/global.css';
 
     let pcbPivot: THREE.Group | null = null;
     const pcbLoader = new GLTFLoader();
-    pcbLoader.load('/models/orbiton.glb', (gltf) => {
+    let pcbModelLoaded = false;
+    function loadPcbModel() {
+      if (pcbModelLoaded) return;
+      pcbModelLoaded = true;
+      pcbLoader.load('/models/orbiton.glb', (gltf) => {
       const model = gltf.scene;
 
       // Enhance all materials for PBR and enable shadows
@@ -1631,6 +1666,11 @@ import '../styles/global.css';
     undefined,
     (error) => { console.error('Orbiton PCB load error:', error); }
     );
+    }
+    const pcbLoadObserver = new IntersectionObserver(([e]) => {
+      if (e.isIntersecting) { loadPcbModel(); pcbLoadObserver.disconnect(); }
+    }, { rootMargin: '200px' });
+    pcbLoadObserver.observe(pcbContainer);
 
     // Hover highlighting
     let pcbCurrentGroup: string | null = null;
