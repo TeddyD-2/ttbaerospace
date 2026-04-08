@@ -249,7 +249,8 @@ import '../styles/global.css';
                 <li class="flex gap-3"><span class="text-[var(--color-accent)]">▸</span><span class="text-[var(--color-text-secondary)]"><span class="text-white">83×44mm</span>, USB-C</span></li>
               </ul>
               <div class="grid md:grid-cols-2 gap-4 h-80">
-                <div id="orbiton-viewer" class="relative bg-[#111111] border border-[var(--color-surface-border)] rounded-lg overflow-hidden h-full">
+                <!-- 3D viewer (desktop only) -->
+                <div id="orbiton-viewer" class="relative bg-[#111111] border border-[var(--color-surface-border)] rounded-lg overflow-hidden h-full hidden md:block">
                   <canvas id="orbiton-canvas" class="w-full h-full cursor-grab"></canvas>
                   <div id="orbiton-loading" class="absolute inset-0 flex items-center justify-center">
                     <p class="text-[var(--color-text-secondary)] text-sm" style="font-family: var(--font-mono)">Loading PCB...</p>
@@ -1443,13 +1444,14 @@ import '../styles/global.css';
     }).observe(tvcContainer);
   </script>
 
-  <!-- Orbiton PCB 3D Viewer Script -->
+  <!-- Orbiton PCB 3D Viewer Script (desktop only) -->
   <script>
     import * as THREE from 'three';
     import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
     import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
-    const pcbIsMobile = window.innerWidth < 768;
+    // Skip entire 3D viewer on mobile
+    if (window.innerWidth >= 768) {
 
     const pcbContainer = document.getElementById('orbiton-viewer')!;
     const pcbCanvas = document.getElementById('orbiton-canvas') as HTMLCanvasElement;
@@ -1459,16 +1461,13 @@ import '../styles/global.css';
 
     const pcbScene = new THREE.Scene();
     const pcbCamera = new THREE.PerspectiveCamera(35, 1, 0.01, 100);
-    const pcbRenderer = new THREE.WebGLRenderer({ canvas: pcbCanvas, antialias: !pcbIsMobile, alpha: true });
-    pcbRenderer.setPixelRatio(Math.min(window.devicePixelRatio, pcbIsMobile ? 1.5 : 2));
+    const pcbRenderer = new THREE.WebGLRenderer({ canvas: pcbCanvas, antialias: true, alpha: true });
+    pcbRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     pcbRenderer.setSize(pcbContainer.clientWidth, pcbContainer.clientHeight);
-    // PBR tone mapping for realistic light response
     pcbRenderer.toneMapping = THREE.LinearToneMapping;
     pcbRenderer.toneMappingExposure = 1.0;
-    if (!pcbIsMobile) {
-      pcbRenderer.shadowMap.enabled = true;
-      pcbRenderer.shadowMap.type = THREE.VSMShadowMap;
-    }
+    pcbRenderer.shadowMap.enabled = true;
+    pcbRenderer.shadowMap.type = THREE.VSMShadowMap;
 
     const pcbControls = new OrbitControls(pcbCamera, pcbCanvas);
     pcbControls.enableDamping = true;
@@ -1478,10 +1477,9 @@ import '../styles/global.css';
     pcbControls.minDistance = 0.01;
     pcbControls.maxDistance = 50;
 
-    // --- Environment map for realistic reflections ---
+    // Environment map for realistic reflections
     const pcbPmrem = new THREE.PMREMGenerator(pcbRenderer);
     pcbPmrem.compileEquirectangularShader();
-    // Procedural studio environment — soft gradient hemisphere
     const envScene = new THREE.Scene();
     const envGeo = new THREE.SphereGeometry(10, 32, 16);
     const envMat = new THREE.ShaderMaterial({
@@ -1498,12 +1496,10 @@ import '../styles/global.css';
         varying vec3 vWorldPos;
         void main() {
           float y = normalize(vWorldPos).y;
-          // Warm top, cool bottom, dark middle — studio HDRI feel
           vec3 top = vec3(0.95, 0.92, 0.88);
           vec3 mid = vec3(0.12, 0.12, 0.14);
           vec3 bot = vec3(0.06, 0.07, 0.10);
           vec3 col = y > 0.0 ? mix(mid, top, pow(y, 0.4)) : mix(mid, bot, pow(-y, 0.6));
-          // Subtle warm accent from the side
           float side = abs(normalize(vWorldPos).x);
           col += vec3(0.15, 0.06, 0.02) * pow(side, 3.0) * (1.0 - abs(y));
           gl_FragColor = vec4(col, 1.0);
@@ -1514,9 +1510,8 @@ import '../styles/global.css';
     const envRT = pcbPmrem.fromScene(envScene, 0.04);
     pcbScene.environment = envRT.texture;
 
-    // --- Lighting: key + fill + rim ---
+    // Lighting
     pcbScene.add(new THREE.AmbientLight(0xffffff, 0.3));
-    // Key light — warm, strong, with shadows
     const pcbKeyLight = new THREE.DirectionalLight(0xffffff, 1.2);
     pcbKeyLight.position.set(3, 6, 4);
     pcbKeyLight.castShadow = true;
@@ -1526,28 +1521,19 @@ import '../styles/global.css';
     pcbKeyLight.shadow.bias = -0.002;
     pcbKeyLight.shadow.radius = 4;
     pcbScene.add(pcbKeyLight);
-    // Fill light — cool, softer, opposite side
     const pcbFillLight = new THREE.DirectionalLight(0xe0e8ff, 0.6);
     pcbFillLight.position.set(-3, 3, -2);
     pcbScene.add(pcbFillLight);
-    // Rim light — edge definition from behind
     const pcbRimLight = new THREE.DirectionalLight(0xffffff, 0.4);
     pcbRimLight.position.set(0, 2, -5);
     pcbScene.add(pcbRimLight);
-    // Subtle bottom bounce
-    const pcbBounceLight = new THREE.HemisphereLight(0x222233, 0x111111, 0.3);
-    pcbScene.add(pcbBounceLight);
+    pcbScene.add(new THREE.HemisphereLight(0x222233, 0x111111, 0.3));
 
-    // PBR highlight material
     const pcbHighlightMat = new THREE.MeshStandardMaterial({
-      color: 0xff3333,
-      roughness: 0.35,
-      metalness: 0.1,
-      emissive: 0x441111,
-      emissiveIntensity: 0.5
+      color: 0xff3333, roughness: 0.35, metalness: 0.1,
+      emissive: 0x441111, emissiveIntensity: 0.5
     });
 
-    // Component name formatting
     function formatComponentName(refDes: string): string {
       if (refDes.startsWith('C')) return `C${refDes.slice(1)} — Capacitor`;
       if (refDes.startsWith('R')) return `R${refDes.slice(1)} — Resistor`;
@@ -1563,7 +1549,6 @@ import '../styles/global.css';
     const pcbMeshNames = new Map<THREE.Mesh, string>();
     const pcbMeshToGroup = new Map<THREE.Mesh, string>();
     const pcbGroupMeshes = new Map<string, THREE.Mesh[]>();
-
     const pcbRaycaster = new THREE.Raycaster();
     const pcbMouse = new THREE.Vector2();
 
@@ -1574,98 +1559,88 @@ import '../styles/global.css';
       if (pcbModelLoaded) return;
       pcbModelLoaded = true;
       pcbLoader.load('/models/orbiton.glb', (gltf) => {
-      const model = gltf.scene;
+        const model = gltf.scene;
 
-      // Enhance all materials for PBR and enable shadows
-      model.traverse((node: any) => {
-        if (node.isMesh) {
-          node.castShadow = true;
-          node.receiveShadow = true;
-          // Upgrade materials: ensure PBR properties
-          const mats = Array.isArray(node.material) ? node.material : [node.material];
-          mats.forEach((mat: any) => {
-            if (mat.isMeshStandardMaterial || mat.isMeshPhysicalMaterial) {
-              // Refine existing PBR mats
-              mat.envMapIntensity = 0.4;
-              mat.needsUpdate = true;
-            } else if (mat.isMeshPhongMaterial || mat.isMeshLambertMaterial) {
-              // Convert legacy materials to Standard
-              const std = new THREE.MeshStandardMaterial({
-                color: mat.color || 0x888888,
-                roughness: 0.5,
-                metalness: mat.shininess ? Math.min(mat.shininess / 200, 0.8) : 0.1,
-                map: mat.map || null,
-                normalMap: mat.normalMap || null,
-                envMapIntensity: 0.4,
-              });
-              node.material = std;
-            }
-          });
-        }
-      });
-
-      // Force PCB board surfaces to correct green
-      const pcbGreen = new THREE.Color(0x008C4A);
-      model.traverse((node: any) => {
-        if (node.isMesh) {
-          const mats = Array.isArray(node.material) ? node.material : [node.material];
-          mats.forEach((mat: any) => {
-            if (mat.color) {
-              const hsl = { h: 0, s: 0, l: 0 };
-              mat.color.getHSL(hsl);
-              // Detect greenish colors (hue 0.2-0.5, some saturation)
-              if (hsl.h > 0.2 && hsl.h < 0.5 && hsl.s > 0.1) {
-                mat.color.copy(pcbGreen);
+        model.traverse((node: any) => {
+          if (node.isMesh) {
+            node.castShadow = true;
+            node.receiveShadow = true;
+            const mats = Array.isArray(node.material) ? node.material : [node.material];
+            mats.forEach((mat: any) => {
+              if (mat.isMeshStandardMaterial || mat.isMeshPhysicalMaterial) {
+                mat.envMapIntensity = 0.4;
                 mat.needsUpdate = true;
+              } else if (mat.isMeshPhongMaterial || mat.isMeshLambertMaterial) {
+                node.material = new THREE.MeshStandardMaterial({
+                  color: mat.color || 0x888888,
+                  roughness: 0.5,
+                  metalness: mat.shininess ? Math.min(mat.shininess / 200, 0.8) : 0.1,
+                  map: mat.map || null,
+                  normalMap: mat.normalMap || null,
+                  envMapIntensity: 0.4,
+                });
               }
-            }
-          });
-        }
-      });
-
-      // Each direct child of root is a component — tag all its descendant meshes
-      model.children.forEach(child => {
-        const name = child.name;
-        if (!name || name.startsWith('=>')) return;
-
-        const displayName = formatComponentName(name);
-        child.traverse(descendant => {
-          if ((descendant as THREE.Mesh).isMesh) {
-            const m = descendant as THREE.Mesh;
-            pcbOriginalMats.set(m, m.material);
-            pcbMeshNames.set(m, displayName);
-            pcbMeshToGroup.set(m, name);
-            if (!pcbGroupMeshes.has(name)) pcbGroupMeshes.set(name, []);
-            pcbGroupMeshes.get(name)!.push(m);
-            pcbMeshes.push(m);
+            });
           }
         });
-      });
 
-      // Center and orient
-      const box = new THREE.Box3().setFromObject(model);
-      const center = box.getCenter(new THREE.Vector3());
-      model.position.set(-center.x, -center.y, -center.z);
+        const pcbGreen = new THREE.Color(0x008C4A);
+        model.traverse((node: any) => {
+          if (node.isMesh) {
+            const mats = Array.isArray(node.material) ? node.material : [node.material];
+            mats.forEach((mat: any) => {
+              if (mat.color) {
+                const hsl = { h: 0, s: 0, l: 0 };
+                mat.color.getHSL(hsl);
+                if (hsl.h > 0.2 && hsl.h < 0.5 && hsl.s > 0.1) {
+                  mat.color.copy(pcbGreen);
+                  mat.needsUpdate = true;
+                }
+              }
+            });
+          }
+        });
 
-      pcbPivot = new THREE.Group();
-      pcbPivot.add(model);
-      pcbScene.add(pcbPivot);
+        model.children.forEach(child => {
+          const name = child.name;
+          if (!name || name.startsWith('=>')) return;
+          const displayName = formatComponentName(name);
+          child.traverse(descendant => {
+            if ((descendant as THREE.Mesh).isMesh) {
+              const m = descendant as THREE.Mesh;
+              pcbOriginalMats.set(m, m.material);
+              pcbMeshNames.set(m, displayName);
+              pcbMeshToGroup.set(m, name);
+              if (!pcbGroupMeshes.has(name)) pcbGroupMeshes.set(name, []);
+              pcbGroupMeshes.get(name)!.push(m);
+              pcbMeshes.push(m);
+            }
+          });
+        });
 
-      const finalBox = new THREE.Box3().setFromObject(pcbPivot);
-      const finalCenter = finalBox.getCenter(new THREE.Vector3());
-      const finalSize = finalBox.getSize(new THREE.Vector3());
-      pcbControls.target.copy(finalCenter);
-      const dist = Math.max(finalSize.x, finalSize.y, finalSize.z) * 2.0;
-      pcbCamera.position.set(finalCenter.x + dist * 0.35, finalCenter.y + dist * 0.55, finalCenter.z + dist * 0.45);
-      pcbControls.update();
+        const box = new THREE.Box3().setFromObject(model);
+        const center = box.getCenter(new THREE.Vector3());
+        model.position.set(-center.x, -center.y, -center.z);
 
-      pcbLoading.style.opacity = '0';
-      pcbLoading.style.transition = 'opacity 0.5s';
-      setTimeout(() => { pcbLoading.style.display = 'none'; }, 500);
-    },
-    undefined,
-    (error) => { console.error('Orbiton PCB load error:', error); }
-    );
+        pcbPivot = new THREE.Group();
+        pcbPivot.add(model);
+        pcbScene.add(pcbPivot);
+
+        const finalBox = new THREE.Box3().setFromObject(pcbPivot);
+        const finalCenter = finalBox.getCenter(new THREE.Vector3());
+        const finalSize = finalBox.getSize(new THREE.Vector3());
+        pcbControls.target.copy(finalCenter);
+        const dist = Math.max(finalSize.x, finalSize.y, finalSize.z) * 2.0;
+        pcbCamera.position.set(finalCenter.x + dist * 0.35, finalCenter.y + dist * 0.55, finalCenter.z + dist * 0.45);
+        pcbControls.update();
+
+        pcbLoading.style.opacity = '0';
+        pcbLoading.style.transition = 'opacity 0.5s';
+        setTimeout(() => { pcbLoading.style.display = 'none'; }, 500);
+      },
+      undefined,
+      (error) => { console.error('Orbiton PCB load error:', error); }
+      );
     }
     const pcbLoadObserver = new IntersectionObserver(([e]) => {
       if (e.isIntersecting) { loadPcbModel(); pcbLoadObserver.disconnect(); }
@@ -1756,7 +1731,6 @@ import '../styles/global.css';
     }
     pcbAnimate();
 
-    // Resize
     new ResizeObserver(() => {
       const w = pcbContainer.clientWidth;
       const h = pcbContainer.clientHeight;
@@ -1764,5 +1738,7 @@ import '../styles/global.css';
       pcbCamera.updateProjectionMatrix();
       pcbRenderer.setSize(w, h);
     }).observe(pcbContainer);
+
+    } // end desktop-only guard
   </script>
 </Layout>
