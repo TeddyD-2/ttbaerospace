@@ -971,12 +971,20 @@ import '../styles/global.css';
     // Animation loop (continuous auto-rotate, pauses when off-screen)
     const worldY = new THREE.Vector3(0, 1, 0);
     let rocketVisible = false;
+    const ROCKET_ROTATE_MAX = 0.008;
+    let rocketRotateSpeed = ROCKET_ROTATE_MAX;
+    let rocketHovered = false;
+    canvas.addEventListener('mouseenter', () => { rocketHovered = true; });
+    canvas.addEventListener('mouseleave', () => { rocketHovered = false; });
     new IntersectionObserver(([e]) => { rocketVisible = e.isIntersecting; }, { threshold: 0 }).observe(container);
     function animate() {
       requestAnimationFrame(animate);
       if (!rocketVisible) return;
-      if (rocketPivot) {
-        rocketPivot.rotateOnWorldAxis(worldY, 0.008);
+      // Smoothly ease rotation speed toward target
+      const target = rocketHovered ? 0 : ROCKET_ROTATE_MAX;
+      rocketRotateSpeed += (target - rocketRotateSpeed) * 0.05;
+      if (rocketPivot && rocketRotateSpeed > 0.0001) {
+        rocketPivot.rotateOnWorldAxis(worldY, rocketRotateSpeed);
       }
       controls.update();
       renderer.render(scene, camera);
@@ -1378,12 +1386,19 @@ import '../styles/global.css';
     // Animation loop (continuous auto-rotate, pauses when off-screen)
     const tvcWorldY = new THREE.Vector3(0, 1, 0);
     let tvcVisible = false;
+    const TVC_ROTATE_MAX = 0.008;
+    let tvcRotateSpeed = TVC_ROTATE_MAX;
+    let tvcHovered = false;
+    tvcCanvas.addEventListener('mouseenter', () => { tvcHovered = true; });
+    tvcCanvas.addEventListener('mouseleave', () => { tvcHovered = false; });
     new IntersectionObserver(([e]) => { tvcVisible = e.isIntersecting; }, { threshold: 0 }).observe(tvcContainer);
     function tvcAnimate() {
       requestAnimationFrame(tvcAnimate);
       if (!tvcVisible) return;
-      if (tvcPivot) {
-        tvcPivot.rotateOnWorldAxis(tvcWorldY, 0.008);
+      const target = tvcHovered ? 0 : TVC_ROTATE_MAX;
+      tvcRotateSpeed += (target - tvcRotateSpeed) * 0.05;
+      if (tvcPivot && tvcRotateSpeed > 0.0001) {
+        tvcPivot.rotateOnWorldAxis(tvcWorldY, tvcRotateSpeed);
       }
       tvcControls.update();
       tvcRenderer.render(tvcScene, tvcCamera);
@@ -1681,12 +1696,19 @@ import '../styles/global.css';
     // Animation loop (continuous auto-rotate, pauses when off-screen)
     const pcbWorldY = new THREE.Vector3(0, 1, 0);
     let pcbVisible = false;
+    const PCB_ROTATE_MAX = 0.008;
+    let pcbRotateSpeed = PCB_ROTATE_MAX;
+    let pcbHovered = false;
+    pcbCanvas.addEventListener('mouseenter', () => { pcbHovered = true; });
+    pcbCanvas.addEventListener('mouseleave', () => { pcbHovered = false; });
     new IntersectionObserver(([e]) => { pcbVisible = e.isIntersecting; }, { threshold: 0 }).observe(pcbContainer);
     function pcbAnimate() {
       requestAnimationFrame(pcbAnimate);
       if (!pcbVisible) return;
-      if (pcbPivot) {
-        pcbPivot.rotateOnWorldAxis(pcbWorldY, 0.008);
+      const target = pcbHovered ? 0 : PCB_ROTATE_MAX;
+      pcbRotateSpeed += (target - pcbRotateSpeed) * 0.05;
+      if (pcbPivot && pcbRotateSpeed > 0.0001) {
+        pcbPivot.rotateOnWorldAxis(pcbWorldY, pcbRotateSpeed);
       }
       pcbControls.update();
       pcbRenderer.render(pcbScene, pcbCamera);
