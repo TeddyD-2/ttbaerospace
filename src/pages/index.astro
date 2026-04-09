@@ -41,7 +41,7 @@ import '../styles/global.css';
     <!-- Video background (desktop only) -->
     <div class="absolute inset-0 z-0 hidden md:block">
       <div class="absolute inset-0 bg-black/50 z-10"></div>
-      <div id="hero-video-wrapper" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] pointer-events-none">
+      <div id="hero-video-wrapper" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] pointer-events-none opacity-0 transition-opacity duration-[1500ms] ease-in">
         <div id="hero-yt-player" class="w-full h-full"></div>
       </div>
     </div>
@@ -529,7 +529,7 @@ import '../styles/global.css';
             iv_load_policy: 3
           },
           events: {
-            onReady: function(e) { e.target.mute(); e.target.playVideo(); },
+            onReady: function(e) { e.target.mute(); e.target.playVideo(); document.getElementById('hero-video-wrapper').classList.remove('opacity-0'); },
             onStateChange: function(e) {
               if (e.data === YT.PlayerState.ENDED) { e.target.seekTo(0); e.target.playVideo(); }
             }
